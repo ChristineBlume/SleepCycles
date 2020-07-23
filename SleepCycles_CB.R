@@ -1,5 +1,5 @@
 ##################################################################################################################################
-## Code written to analyse sleep cycles from SIESTA Scoring Data    
+## Code written to analyse sleep cycles sleep scoring data    
 ##                                                                      
 ## Author: CBlume                                                       
 ## Date: 22 07 20
