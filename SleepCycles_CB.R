@@ -29,7 +29,6 @@
 SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = F, plot = T){
   
   # # --- set a few things
-  # p <- "E:/10 Data/12-ALocGlo/rawdata_ALocGlo_oddball/LightSleep_EXP/SIESTA_results/bvaMarker_30s/" # path to SIESTA results converted to *vmrk using ascii2vmrk.m (located here: E:\10 Data\12-ALocGlo\rawdata_ALocGlo_oddball\LightSleep_EXP\SIESTA_results)
   setwd(p)
   
   #----- check if pacman is installed - if not install it
@@ -53,7 +52,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
   }
   
   #--------------------------------------------------------
-  #----- loop through files to determine sleep cycles
+  #----- loop through files in directory to determine sleep cycles
   #--------------------------------------------------------
   
   for (i in 1:length(d)){
