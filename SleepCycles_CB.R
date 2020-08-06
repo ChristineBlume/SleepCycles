@@ -1,9 +1,9 @@
 ##################################################################################################################################
-## Code written to analyse sleep cycles sleep scoring data    
+## Code written to analyse sleep cycles from SIESTA Scoring Data    
 ##                                                                      
 ## Author: CBlume                                                       
-## Date: 22 07 20
-## Version: 1.0
+## Date: 06 08 20
+## Version: 1.1
 ##
 ## The function requires any sleep staging file with a column named "Description", in which the sleep stages are coded 
 ## in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern. Staging must be in 30s epochs. Besides text files, it 
@@ -12,7 +12,7 @@
 ## Sleep cycles are largely defined according to the originally proposed criteria by Feinberg & Floyd (1979). 
 ## NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, but not REM). 
 ## REM following a NREM period automatically starts a potential REM period, however any REMP must be at least
-## 5min (except the first REMP). NREMPs that exceed 120min in duration (excl. wake) can be split into 2 parts. 
+## 5min (except the first REMP). If the first NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
 ## The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3 
 ## (cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010).
 ##
@@ -26,9 +26,10 @@
 ##
 ## By default, the function produces and saves a plot for visual inspection of the results.
 ################################################################################################################################## 
-SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = F, plot = T){
+SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm_incompletecycs = F, plot = T){
   
   # # --- set a few things
+  # p <- "E:/10 Data/12-ALocGlo/rawdata_ALocGlo_oddball/LightSleep_EXP/SIESTA_results/bvaMarker_30s/" # path to SIESTA results converted to *vmrk using ascii2vmrk.m (located here: E:\10 Data\12-ALocGlo\rawdata_ALocGlo_oddball\LightSleep_EXP\SIESTA_results)
   setwd(p)
   
   #----- check if pacman is installed - if not install it
@@ -37,6 +38,11 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
   #----- use pacman function p_load to check all packages that you are using in this script
   pacman::p_load(ggplot2, reshape2, plyr, stringr, viridis)
   
+  x <- list.files(p, pattern = glob2rx("*SCycles.txt"))
+  if (length(x)>0){
+    stop("Please remove files from previous Sleep Cycle detections from the folder.")
+  }
+  
   #----- list all files in folder
   if (filetype == "vmrk"){
     d <- list.files(p, pattern = "*.vmrk")
@@ -44,6 +50,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
 #################################################################
   }else if (filetype == "txt"){
     d <- list.files(p, pattern = "*.txt")
+    hd <- readline("Do your files have a header with row names (y/n)? ") 
   }
   
   #----- has a vector of files been specified?
@@ -51,21 +58,73 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
     d <- d[files]
   }
   
+  #----- prepare results folder
+  sv <- paste("SleepCycles", Sys.Date(), sep = "_")
+  dir.create(file.path(paste(p, sv, sep = "/")), showWarnings = FALSE)
+  
   #--------------------------------------------------------
-  #----- loop through files in directory to determine sleep cycles
+  #----- loop through files to determine sleep cycles
   #--------------------------------------------------------
   
   for (i in 1:length(d)){
     print(i)
     filename <- d[i]
+    
+    ## load data
     if (filetype == "vmrk"){
       header <- read.csv(filename, nrows = 1, header = F)
       data <- read.csv(filename, skip = 1) #each sleep stage refers to the 30s preceding the marker (irrespective of SR!)
+      cycles <- data
+      cycles[,1] <- "SleepCycle"
+      cycles[,2] <- NA
+    }else if (filetype == "txt"){
+      if (hd == "y"){ # does it have a header?
+        data <- read.table(filename, header = T)
+        for (z in 1:ncol(data)){
+          if (length(unique(data[,z])) == 5){
+            if (all(as.numeric(sort(unique(data[,z]))) == c(0,1,2,3,5))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+          if (length(unique(data[,z])) == 6){
+            if (all(as.numeric(sort(unique(data[,z]))) == na.omit(c(0,1,2,3,5,treat_as_W)))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+        }
+      }else{
+        data <- read.table(filename, header = F)
+        for (z in 1:ncol(data)){
+          if (length(unique(data[,z])) == 5){
+            if (all(as.numeric(sort(unique(data[,z]))) == c(0,1,2,3,5))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+          if (length(unique(data[,z])) == 6){
+            if (all(as.numeric(sort(unique(data[,z]))) == na.omit(c(0,1,2,3,5,treat_as_W)))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+        }
+      }
     }
     
-    cycles <- data
-    cycles[,1] <- "SleepCycle"
-    cycles[,2] <- NA
+    # Recode markers to be treated as W
+    if (!is.na(treat_as_W)){
+      data$Description[data$Description == treat_as_W] <- 0
+    }
     
     # Recode/combine stages
     data$Descr2 <- NA
@@ -134,9 +193,10 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
     
     ## is any NREM part (excl. wake) of a NREMP longer than 120min?
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
+    scndNREMP <- which(data$CycleStart == "NREMP")[2] 
     
     toolong <- NA
-    for (k in seq(2,length(cycs),2)){
+    for (k in seq(2,length(cycs),2)){ #check every second one as only every second is a NREMP
       subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
       wake_eps <- sum(subset$Descr2 == "W")
       if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #<= as cycs[k] is already the beginning of the REMP
@@ -144,72 +204,66 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
       }
     }
     
-    # now split this NREMP
-    if (length(toolong) > 1){
-      toolong <- toolong[c(-1)] #rm NA from beginning
+    # now split the first NREMP that is too long
+    if ((length(toolong) > 1) & (toolong[c(2)] < scndNREMP)){ #start of too long NREM must be before start of second NREMP -> only first NREMP is split
+      toolong <- toolong[c(2)] #only choose first NREM cycle
       
-      for (k in (1:length(toolong))){
-        beg_end <- c(cycs[which(cycs==toolong[k])], cycs[which(cycs==toolong[k])+1]) #find beginning and end of NREMP that is too long
-        
-        # find RWN12 episodes that are > 12min
-        RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are N1/2
-        RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])]
-        RWN12s_start <- NA
-        for (kk in 1:(length(RWN12s)-23)){
-          if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of N12 epochs is continuous
-            RWN12s_start <- c(RWN12s_start, RWN12s[kk])
-          }
-        }
-        RWN12s_start <- RWN12s_start[-c(1)] #first was NA, remove
-        rm(kk)
-        
-        RWN12s_start2 <- RWN12s_start[1]
-        for (kk in 1:(length(RWN12s_start)-1)){
-          if ((RWN12s_start[kk+1]-RWN12s_start[kk])>1){
-            RWN12s_start2 <- c(RWN12s_start2, RWN12s_start[kk+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
-          }
-        }
-        
-        # find first N3 episode
-        N3s_1 <- which(data$Descr2 == "N3")[1] #which is the first 30s epoch of N3
-        
-        # delete RWN12s_start2 before first N3s
-        RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2>N3s_1)]
-        
-        # second NREMP starts with N3 following 12min of N1/2
-        N3s <- which(data$Descr2 == "N3") #which 30s epoch of N3 are there
-        N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][1] # gives first N3 epoch after N12 episode >12min
-        data$CycleStart[N3s_cycstart] <- "NREMP"
-        
-        if (k == 1){
-          splits <- N3s_cycstart
-        }else{
-          splits <- c(splits, N3s_cycstart)
+      beg_end <- c(cycs[which(cycs==toolong)], cycs[which(cycs==toolong)+1]) #find beginning and end of NREMP that is too long
+      
+      # find RWN12 episodes that are > 12min
+      RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are N1/2
+      RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])]
+      RWN12s_start <- NA
+      for (kk in 1:(length(RWN12s)-23)){
+        if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of N12 epochs is continuous
+          RWN12s_start <- c(RWN12s_start, RWN12s[kk])
         }
       }
+      RWN12s_start <- RWN12s_start[-c(1)] #first was NA, remove
+      rm(kk)
+      
+      RWN12s_start2 <- RWN12s_start[1]
+      for (kk in 1:(length(RWN12s_start)-1)){
+        if ((RWN12s_start[kk+1]-RWN12s_start[kk])>1){
+          RWN12s_start2 <- c(RWN12s_start2, RWN12s_start[kk+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
+        }
+      }
+      
+      # find first N3 episode
+      N3s_1 <- which(data$Descr2 == "N3")[1] #which is the first 30s epoch of N3
+      
+      # delete RWN12s_start2 before first N3s
+      RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2>N3s_1)]
+      
+      # second NREMP starts with N3 following 12min of N1/2
+      N3s <- which(data$Descr2 == "N3") #which 30s epoch of N3 are there
+      N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][1] # gives first N3 epoch after N12 episode >12min
+      data$CycleStart[N3s_cycstart] <- "NREMP"
+      
+      splits <- N3s_cycstart
       splits <- unique(splits)
       
       # ask user if s/he is happy with the result of the splitting
       # plot results
       dfplot <- data
-      dfplot <- dfplot[,-c(1,4,5)]
       dfplot$time <- seq(1, nrow(dfplot)) # gives epochs
       dfplot$Description[dfplot$Description == 1] <- -1
       dfplot$Description[dfplot$Description == 2] <- -2
       dfplot$Description[dfplot$Description == 3] <- -3
       dfplot$Description[dfplot$Description == 5] <- 1
       
-      p <- ggplot(dfplot, aes(x=time, y=Description, colour=Description)) 
-      p <- p + theme_bw()+
+      pp <- ggplot(dfplot, aes(x=time, y=Description, colour=Description)) 
+      pp <- pp + theme_bw()+
         geom_point() +
         geom_line(aes(x=time, y=Description))+
+        ggtitle(as.character(filename))+
         xlab("Time") +
         ylab("Sleep Stage")+
         scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
         scale_color_viridis(name = "Sleep Stage", option = "D")+
         geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
         annotate(geom="text", x = 500, y = 2, label = paste("split at epoch(s):", as.character(splits), sep = " "))
-      print(p)
+      print(pp)
       
       val <- readline("Are you happy with the result (y/n/skip)?. ") 
       
@@ -217,17 +271,19 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
         message("This night is skipped.")
         next
       }else if (val == "n"){
-        newperiod <- readline("At which epoch do you want to start the new NREM period instead? Please type epoch number. ") 
+        newperiod <- readline("At which epoch do you want to start the new NREM period instead? Please type epoch number or NA to not split. ") 
         data$CycleStart[N3s_cycstart] <- NA #rm old indicator
-        data$CycleStart[as.numeric(newperiod)] <- "NREMP"
+        if (newperiod != "NA"){
+          data$CycleStart[as.numeric(newperiod)] <- "NREMP"
+        }
       }else if (val == "y"){
-        next
+        message("Yay, that seemed to work well.")
       }else{
         message("Missing entry. This night is skipped")
-        next
       }
+      rm(dfplot, pp)
     }
-    rm(dfplot, p)
+    
     
     # -----------------------------------------------------------------------------
     # now finish and add cycle markers and percentiles
@@ -312,10 +368,15 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
       cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP") 
       if (data$CycleStart[cycs[length(cycs)]] == "REMP"){
         REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
-        stop <- REMs[length(REMs)]+1 # stop after last REM epoch
-        data$CycleStart[stop] <- "stop"
-        data$cycles[stop:nrow(data)] <- NA
-        data$REM.NREM[stop:nrow(data)] <- NA
+        if((length(REMs) + 1)>length(REMs)){ #check if the last REM is the last staged epoch
+          stop <- REMs[length(REMs)] # stop at last (REM) epoch
+          data$CycleStart[stop] <- "stop"
+        }else{
+          stop <- REMs[length(REMs)]+1 # stop after last REM epoch
+          data$CycleStart[stop] <- "stop"
+          data$cycles[stop:nrow(data)] <- NA
+          data$REM.NREM[stop:nrow(data)] <- NA
+        }
       }else{
         lastNREMP <-  tail(which(data$CycleStart == "NREMP"),1)
         Ws <- which(data$Descr3 == "W") #which 30s epochs are W
@@ -405,17 +466,19 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
     cycles$percentile <- data$perc
     
     ## save new file
+    svv <- paste(p, sv, sep = "/")
     name <- unlist(str_split(filename, pattern = "_"))
     savename <- paste0(c(name[1:(length(name)-1)]), sep = "_", collapse = "")
     savename <- paste(savename, "SCycles.txt", sep = "")
-    write.table(cycles, file = savename, row.names = F)
+    write.table(cycles, file = paste(svv, savename, sep = "/"), row.names = F)
     
     ## plot results if desired
     if (plot == T){
       dfplot <- data
-      dfplot <- dfplot[,-c(1,4,5)]
       dfplot$time <- seq(1,nrow(dfplot))
-      dfplot$time2 <- (dfplot$Position/(1000/128))/(1000*60)
+      if (filetype == "vmrk"){
+        dfplot$time2 <- (dfplot$Position/(1000/128))/(1000*60)
+      }
       dfplot$Description[dfplot$Description == 1] <- -1
       dfplot$Description[dfplot$Description == 2] <- -2
       dfplot$Description[dfplot$Description == 3] <- -3
@@ -449,8 +512,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "txt", rm_incompletecycs = 
       
       savename <- paste0(c(name[1:(length(name)-2)]), sep = "_", collapse = "")
       savename <- paste(savename, "plot.png", sep = "")
-      ggsave(file=savename, width = 25, height = 15, units = "cm", dpi = 600) 
+      ggsave(file=paste(svv, savename, sep = "/"), width = 25, height = 15, units = "cm", dpi = 600) 
     }
-
   }
 }
