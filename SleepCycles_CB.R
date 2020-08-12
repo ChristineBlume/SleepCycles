@@ -2,7 +2,7 @@
 ## Code written to analyse sleep cycles from SIESTA Scoring Data    
 ##                                                                      
 ## Author: CBlume                                                       
-## Date: 06 08 20
+## Date: 12 08 20
 ## Version: 1.1
 ##
 ## The function requires any sleep staging file with a column named "Description", in which the sleep stages are coded 
@@ -10,7 +10,7 @@
 ## can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default), "vmrk", or "vpd").
 ##
 ## Sleep cycles are largely defined according to the originally proposed criteria by Feinberg & Floyd (1979). 
-## NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, but not REM). 
+## NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, up to <5min REM). 
 ## REM following a NREM period automatically starts a potential REM period, however any REMP must be at least
 ## 5min (except the first REMP). If the first NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
 ## The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3 
@@ -29,7 +29,6 @@
 SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm_incompletecycs = F, plot = T){
   
   # # --- set a few things
-  # p <- "E:/10 Data/12-ALocGlo/rawdata_ALocGlo_oddball/LightSleep_EXP/SIESTA_results/bvaMarker_30s/" # path to SIESTA results converted to *vmrk using ascii2vmrk.m (located here: E:\10 Data\12-ALocGlo\rawdata_ALocGlo_oddball\LightSleep_EXP\SIESTA_results)
   setwd(p)
   
   #----- check if pacman is installed - if not install it
@@ -211,11 +210,11 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
       beg_end <- c(cycs[which(cycs==toolong)], cycs[which(cycs==toolong)+1]) #find beginning and end of NREMP that is too long
       
       # find RWN12 episodes that are > 12min
-      RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are N1/2
-      RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])]
+      RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are R, W, or N1/2
+      RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])] # search for R, W, N1, or N2 epochs between beginning and end of NREMP
       RWN12s_start <- NA
       for (kk in 1:(length(RWN12s)-23)){
-        if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of N12 epochs is continuous
+        if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of R, W, N12 epochs is continuous min. 12min
           RWN12s_start <- c(RWN12s_start, RWN12s[kk])
         }
       }
@@ -237,7 +236,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
       
       # second NREMP starts with N3 following 12min of N1/2
       N3s <- which(data$Descr2 == "N3") #which 30s epoch of N3 are there
-      N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][1] # gives first N3 epoch after N12 episode >12min
+      N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][1] # gives first N3 epoch after R, W, N12 episode >12min
       data$CycleStart[N3s_cycstart] <- "NREMP"
       
       splits <- N3s_cycstart
@@ -262,10 +261,20 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
         scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
         scale_color_viridis(name = "Sleep Stage", option = "D")+
         geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
-        annotate(geom="text", x = 500, y = 2, label = paste("split at epoch(s):", as.character(splits), sep = " "))
+        annotate(geom="text", x = 500, y = 2, label = paste("split at epoch:", as.character(splits), sep = " "))
       print(pp)
       
-      val <- readline("Are you happy with the result (y/n/skip)?. ") 
+      # check if both NREM parts would still be >=20min 
+      part1 <- splits-cycs[1]
+      part2 <- cycs[2]-splits+1
+      print(paste0("NREMP1 would be ", (as.character(part1/2)), "min.", sep = " "))
+      print(paste0("NREMP2 would be ", (as.character(part2/2)), "min.", sep = " "))
+      if (part1 < 40 | part2 < 40){
+        print(warning("NOTE: If you split, one NREM cycle will be shorter than 20 min."))
+      }
+      
+      # Ask about happiness level
+      val <- readline("Are you happy with the result (y/n/skip/nextN3)?. ") # y splits at suggested point, n offers to choose, skip skips this night, nextN3 chooses next N3 epoch
       
       if(val == "skip"){
         message("This night is skipped.")
@@ -278,6 +287,18 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
         }
       }else if (val == "y"){
         message("Yay, that seemed to work well.")
+      }else if (val == "nextN3"){
+        message("Splitting at next N3 epoch.")
+        print(paste0("Next N3 epoch is epoch ", (as.character(N3s[c(N3s > RWN12s_start2[1])][2])), sep = " "))
+        data$CycleStart[N3s_cycstart] <- NA #rm old indicator
+        N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][2] # gives second N3 epoch after R, W, N12 episode >12min
+        data$CycleStart[as.numeric(N3s_cycstart)] <- "NREMP"
+        
+        splits <- N3s_cycstart
+        part1 <- splits-cycs[1]
+        part2 <- cycs[2]-splits+1
+        print(paste0("NREMP1 is ", (as.character(part1/2)), "min.", sep = " "))
+        print(paste0("NREMP2 is ", (as.character(part2/2)), "min.", sep = " "))
       }else{
         message("Missing entry. This night is skipped")
       }
@@ -363,48 +384,82 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
       end <- which(data$Descr3 == "NREM" | data$Descr3 == "W")
       end <- end[c(end > lastREMP)] # NREM or wake following onset of last REMP
       stop <- NA
+      
     }else if (rm_incompletecycs == F){
       #remove NREM/W following last REMP or REM/W following last NREMP
       cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP") 
       if (data$CycleStart[cycs[length(cycs)]] == "REMP"){
         REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
-        if((length(REMs) + 1)>length(REMs)){ #check if the last REM is the last staged epoch
-          stop <- REMs[length(REMs)] # stop at last (REM) epoch
+        if(tail(REMs, n = 1) == nrow(data)){ #check if the last REM is the last staged epoch
+          stop <- tail(REMs, n = 1) # stop at last (REM) epoch
           data$CycleStart[stop] <- "stop"
         }else{
-          stop <- REMs[length(REMs)]+1 # stop after last REM epoch
+          stop <- tail(REMs, n = 1)+1 # stop after last REM epoch
           data$CycleStart[stop] <- "stop"
           data$cycles[stop:nrow(data)] <- NA
           data$REM.NREM[stop:nrow(data)] <- NA
         }
       }else{
         lastNREMP <-  tail(which(data$CycleStart == "NREMP"),1)
+        # find beginning of last continuous W
         Ws <- which(data$Descr3 == "W") #which 30s epochs are W
-        Ws <- Ws[Ws > lastNREMP]
+        Ws <- Ws[Ws > lastNREMP] # where are the W episodes following the last NREMP onset
         if (length(Ws) > 2){
           # find last continuous W episode (i.e., final W)
-          Ws_start <- NA
+          Ws_start <- head(Ws,1)
           for (kk in 2:(length(Ws))){
             if (Ws[kk-1] != Ws[kk]-1){ 
               Ws_start <- c(Ws_start, Ws[kk])
-            }else{
-              next
             }
           }
-          if (!all(is.na(Ws_start))){
-            Ws_start <- tail(Ws_start,1) #last is the onset of the last wake episode
+          Ws_start <- tail(Ws_start,1) #last is the onset of the last wake episode
+        }else{
+          Ws_start <- c()
+        }
+        
+        # check if last W is again followed by NREM
+        NREMs <- which(data$Descr3 == "NREM") #which 30s epochs are NREM
+        if (length(Ws_start) > 0){
+          if(Ws_start < tail(NREMs,1))   Ws_start <- c()
+        }
+        
+        # check if last epoch is W
+        if (length(Ws_start) == 0 & data$Descr3[nrow(data)] == "W")   Ws_start <- nrow(data)
+        
+        # place stopping criterion of necessary
+        if (length(Ws_start) > 0){
+          data$CycleStart[data$CycleStart == "stop"] <- NA
+          stop <- Ws_start
+          data$CycleStart[stop] <- "stop"
+        }
+        
+        #Now REMP could be last again > remove NREM/W following last REMP
+        cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP") 
+        if (data$CycleStart[cycs[length(cycs)]] == "REMP"){
+          REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
+          if(tail(REMs, n = 1) == nrow(data)){ #check if the last REM is the last staged epoch
+            data$CycleStart[data$CycleStart == "stop"] <- NA
+            stop <- tail(REMs, n = 1) # stop at last (REM) epoch
+            data$CycleStart[stop] <- "stop"
           }else{
-            Ws_start <- head(Ws,1)
+            data$CycleStart[data$CycleStart == "stop"] <- NA
+            stop <- tail(REMs, n = 1)+1 # stop after last REM epoch
+            data$CycleStart[stop] <- "stop"
+            data$cycles[stop:nrow(data)] <- NA
+            data$REM.NREM[stop:nrow(data)] <- NA
           }
-          data$CycleStart[Ws_start] <- "stop"
-          # now check again if >=15min criterion is still fulfilled for the last NREMP
-          if(Ws_start - tail(which(data$CycleStart == "NREMP"),1)>=30){
-            data$cycles[Ws_start:nrow(data)] <- NA
-            data$REM.NREM[Ws_start:nrow(data)] <- NA
+        }
+        
+        # check if last NREMP is still >= 15min if a stopping criterion has been introduced
+        check <- which(data$CycleStart == "stop")
+        if (length(check)>0){
+          if(stop - tail(which(data$CycleStart == "NREMP"),1)>=30){
+            data$cycles[stop:nrow(data)] <- NA
+            data$REM.NREM[stop:nrow(data)] <- NA
           }else{
             # if not, remove last NREMP completely
             data$CycleStart[tail(which(data$CycleStart == "NREMP"),1)] <- "stop"
-            data$CycleStart[Ws_start] <- NA
+            data$CycleStart[stop] <- NA
             data$cycles[tail(which(data$CycleStart == "stop"),1):nrow(data)] <- NA
             data$REM.NREM[tail(which(data$CycleStart == "stop"),1):nrow(data)] <- NA
             
