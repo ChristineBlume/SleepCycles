@@ -3,7 +3,7 @@ in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern. Staging must be in 30
 can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default), "vmrk", or "vpd").
 
 Sleep cycles are largely defined according to the originally proposed criteria by Feinberg & Floyd (1979). 
-NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, but not REM). 
+NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, but not >5min consecutive REM). 
 REM following a NREM period automatically starts a potential REM period, however any REMP must be at least
 5min (except the first REMP). If the first NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
 The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3 
