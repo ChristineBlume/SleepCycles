@@ -2,19 +2,22 @@
 ## Code written to analyse sleep cycles from SIESTA Scoring Data    
 ##                                                                      
 ## Author: CBlume                                                       
-## Date: 12 08 20
+## Date: 14 08 20
 ## Version: 1.1
 ##
 ## The function requires any sleep staging file with a column named "Description", in which the sleep stages are coded 
-## in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern. Staging must be in 30s epochs. Besides text files, it 
+## in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern. The user can define other integers to be handled as W or N3
+## (i.e. in the case stagings were done according to the old R&K criteria including S3 and S4).
+## Staging must be in 30s epochs. Besides text files, it 
 ## can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default), "vmrk", or "vpd").
 ##
 ## Sleep cycles are largely defined according to the originally proposed criteria by Feinberg & Floyd (1979). 
 ## NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, up to <5min REM). 
 ## REM following a NREM period automatically starts a potential REM period, however any REMP must be at least
-## 5min (except the first REMP). If the first NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
-## The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3 
-## (cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010).
+## 5min (except the first REMP). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
+## The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3, that is
+## a lightening of sleep (cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010). The code makes suggestions where
+## to split. However, the code also offers the possibility to choose an different epoch to split.
 ##
 ## Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles. In case the 
 ## length of a period is not divisible by 10 (i.e., 203 epochs), we added one epoch to percentiles in a randomized
@@ -22,11 +25,14 @@
 ## 
 ## The code offers to choose whether incomplete cycles should be removed at the end of the night (rm_incompletecycs, default = F). 
 ##
+## Athough this is not encouraged, for some participants it may be necessary to decrease the minimum duration of REM from 5min to 4 or 4.5min
+## as otherwise a seemingly 'clear' REM period is skipped. While the default length of REMPs is 10 segments, it can be decreased.
+##
 ## The user can either process all files in a given directory (default) or specific files by specifying a vector of files.
 ##
 ## By default, the function produces and saves a plot for visual inspection of the results.
 ################################################################################################################################## 
-SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm_incompletecycs = F, plot = T){
+SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, treat_as_N3 = NA, rm_incompletecycs = F, plot = T, REMP_length = 10){
   
   # # --- set a few things
   setwd(p)
@@ -76,6 +82,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
       cycles <- data
       cycles[,1] <- "SleepCycle"
       cycles[,2] <- NA
+      cycles$SleepStages <- data$Description
     }else if (filetype == "txt"){
       if (hd == "y"){ # does it have a header?
         data <- read.table(filename, header = T)
@@ -84,14 +91,25 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
             if (all(as.numeric(sort(unique(data[,z]))) == c(0,1,2,3,5))){
               colnames(data)[z] <- "Description"
               cycles <- data
+              cycles$SleepStages <- data$Description
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
           }
           if (length(unique(data[,z])) == 6){
-            if (all(as.numeric(sort(unique(data[,z]))) == na.omit(c(0,1,2,3,5,treat_as_W)))){
+            if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
+              cycles$SleepStages <- data$Description
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+          if (length(unique(data[,z])) == 7){
+            if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              cycles$SleepStages <- data$Description
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
@@ -104,14 +122,25 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
             if (all(as.numeric(sort(unique(data[,z]))) == c(0,1,2,3,5))){
               colnames(data)[z] <- "Description"
               cycles <- data
+              cycles$SleepStages <- data$Description
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
           }
           if (length(unique(data[,z])) == 6){
-            if (all(as.numeric(sort(unique(data[,z]))) == na.omit(c(0,1,2,3,5,treat_as_W)))){
+            if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
+              cycles$SleepStages <- data$Description
+              colnames(cycles)[z] <- "SleepCycle"
+              break
+            }
+          }
+          if (length(unique(data[,z])) == 7){
+            if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
+              colnames(data)[z] <- "Description"
+              cycles <- data
+              cycles$SleepStages <- data$Description
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
@@ -123,6 +152,11 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
     # Recode markers to be treated as W
     if (!is.na(treat_as_W)){
       data$Description[data$Description == treat_as_W] <- 0
+    }
+    
+    # Recode markers to be treated as N3
+    if (!is.na(treat_as_N3)){
+      data$Description[data$Description == treat_as_N3] <- 3
     }
     
     # Recode/combine stages
@@ -164,8 +198,8 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
     ## Find REM episodes (first can be <5min, others have to be at least 5min)
     REMs <- which(data$Descr3 == "REM") #which 30s epochs are NREM
     REMs_start <- REMs[1] #set beginning of first as no criterion
-    for (k in 1:(length(REMs)-9)){
-      if (all(seq(REMs[k],length.out = 10) == REMs[seq(k,k+9)])){ # check if the sequence of NREM epochs is continuous
+    for (k in 1:(length(REMs)-(REMP_length-1))){
+      if (all(seq(REMs[k],length.out = REMP_length) == REMs[seq(k,k+(REMP_length-1))])){ # check if the sequence of REM epochs is continuous
         REMs_start <- c(REMs_start, REMs[k])
       }
     }
@@ -192,7 +226,6 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
     
     ## is any NREM part (excl. wake) of a NREMP longer than 120min?
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
-    scndNREMP <- which(data$CycleStart == "NREMP")[2] 
     
     toolong <- NA
     for (k in seq(2,length(cycs),2)){ #check every second one as only every second is a NREMP
@@ -202,107 +235,283 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
         toolong <- c(toolong, cycs[k-1])
       }
     }
+    toolong <- na.omit(toolong)
     
-    # now split the first NREMP that is too long
-    if ((length(toolong) > 1) & (toolong[c(2)] < scndNREMP)){ #start of too long NREM must be before start of second NREMP -> only first NREMP is split
-      toolong <- toolong[c(2)] #only choose first NREM cycle
-      
-      beg_end <- c(cycs[which(cycs==toolong)], cycs[which(cycs==toolong)+1]) #find beginning and end of NREMP that is too long
-      
-      # find RWN12 episodes that are > 12min
-      RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are R, W, or N1/2
-      RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])] # search for R, W, N1, or N2 epochs between beginning and end of NREMP
-      RWN12s_start <- NA
-      for (kk in 1:(length(RWN12s)-23)){
-        if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of R, W, N12 epochs is continuous min. 12min
-          RWN12s_start <- c(RWN12s_start, RWN12s[kk])
-        }
-      }
-      RWN12s_start <- RWN12s_start[-c(1)] #first was NA, remove
-      rm(kk)
-      
-      RWN12s_start2 <- RWN12s_start[1]
-      for (kk in 1:(length(RWN12s_start)-1)){
-        if ((RWN12s_start[kk+1]-RWN12s_start[kk])>1){
-          RWN12s_start2 <- c(RWN12s_start2, RWN12s_start[kk+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
-        }
-      }
-      
-      # find first N3 episode
-      N3s_1 <- which(data$Descr2 == "N3")[1] #which is the first 30s epoch of N3
-      
-      # delete RWN12s_start2 before first N3s
-      RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2>N3s_1)]
-      
-      # second NREMP starts with N3 following 12min of N1/2
-      N3s <- which(data$Descr2 == "N3") #which 30s epoch of N3 are there
-      N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][1] # gives first N3 epoch after R, W, N12 episode >12min
-      data$CycleStart[N3s_cycstart] <- "NREMP"
-      
-      splits <- N3s_cycstart
-      splits <- unique(splits)
-      
-      # ask user if s/he is happy with the result of the splitting
-      # plot results
-      dfplot <- data
-      dfplot$time <- seq(1, nrow(dfplot)) # gives epochs
-      dfplot$Description[dfplot$Description == 1] <- -1
-      dfplot$Description[dfplot$Description == 2] <- -2
-      dfplot$Description[dfplot$Description == 3] <- -3
-      dfplot$Description[dfplot$Description == 5] <- 1
-      
-      pp <- ggplot(dfplot, aes(x=time, y=Description, colour=Description)) 
-      pp <- pp + theme_bw()+
-        geom_point() +
-        geom_line(aes(x=time, y=Description))+
-        ggtitle(as.character(filename))+
-        xlab("Time") +
-        ylab("Sleep Stage")+
-        scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
-        scale_color_viridis(name = "Sleep Stage", option = "D")+
-        geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
-        annotate(geom="text", x = 500, y = 2, label = paste("split at epoch:", as.character(splits), sep = " "))
-      print(pp)
-      
-      # check if both NREM parts would still be >=20min 
-      part1 <- splits-cycs[1]
-      part2 <- cycs[2]-splits+1
-      print(paste0("NREMP1 would be ", (as.character(part1/2)), "min.", sep = " "))
-      print(paste0("NREMP2 would be ", (as.character(part2/2)), "min.", sep = " "))
-      if (part1 < 40 | part2 < 40){
-        print(warning("NOTE: If you split, one NREM cycle will be shorter than 20 min."))
-      }
-      
-      # Ask about happiness level
-      val <- readline("Are you happy with the result (y/n/skip/nextN3)?. ") # y splits at suggested point, n offers to choose, skip skips this night, nextN3 chooses next N3 epoch
-      
-      if(val == "skip"){
-        message("This night is skipped.")
-        next
-      }else if (val == "n"){
-        newperiod <- readline("At which epoch do you want to start the new NREM period instead? Please type epoch number or NA to not split. ") 
-        data$CycleStart[N3s_cycstart] <- NA #rm old indicator
-        if (newperiod != "NA"){
-          data$CycleStart[as.numeric(newperiod)] <- "NREMP"
-        }
-      }else if (val == "y"){
-        message("Yay, that seemed to work well.")
-      }else if (val == "nextN3"){
-        message("Splitting at next N3 epoch.")
-        print(paste0("Next N3 epoch is epoch ", (as.character(N3s[c(N3s > RWN12s_start2[1])][2])), sep = " "))
-        data$CycleStart[N3s_cycstart] <- NA #rm old indicator
-        N3s_cycstart <- N3s[c(N3s > RWN12s_start2[1])][2] # gives second N3 epoch after R, W, N12 episode >12min
-        data$CycleStart[as.numeric(N3s_cycstart)] <- "NREMP"
+    ## now split NREMPs that are too long
+    if ((length(toolong) > 0)){
+      for (zz in 1:length(toolong)){
+        curr_toolong <- toolong[c(zz)]
         
-        splits <- N3s_cycstart
-        part1 <- splits-cycs[1]
-        part2 <- cycs[2]-splits+1
-        print(paste0("NREMP1 is ", (as.character(part1/2)), "min.", sep = " "))
-        print(paste0("NREMP2 is ", (as.character(part2/2)), "min.", sep = " "))
-      }else{
-        message("Missing entry. This night is skipped")
+        message(paste0("Attempting to split NREMP ", as.character(zz), " out of ", as.character(length(toolong)), "."))
+        
+        beg_end <- c(cycs[which(cycs==curr_toolong)], cycs[which(cycs==curr_toolong)+1]) #find beginning and end of NREMP that is too long
+        
+        # find RWN12 episodes that are > 12min within detected NREMP
+        RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are R, W, or N1/2
+        RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])] # search for R, W, N1, or N2 epochs between beginning and end of current NREMP
+        RWN12s_start <- NA
+        for (kk in 1:(length(RWN12s)-23)){
+          if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of R, W, N12 epochs is continuous min. 12min
+            RWN12s_start <- c(RWN12s_start, RWN12s[kk])
+          }
+        }
+        RWN12s_start <- RWN12s_start[-c(1)] #first was NA, remove
+        rm(kk)
+        
+        RWN12s_start2 <- RWN12s_start[1]
+        for (kk in 1:(length(RWN12s_start)-1)){
+          if ((RWN12s_start[kk+1]-RWN12s_start[kk])>1){
+            RWN12s_start2 <- c(RWN12s_start2, RWN12s_start[kk+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
+          }
+        }
+        
+        # remove 12min period if it marks the beginning of the NREMP
+        RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2 > beg_end[1])]
+        
+        if (length(RWN12s_start2) > 0){ #only split if there is a lightening of sleep following the onset of the NREMP
+          # find N3 episodes within period to split
+          N3s <- which(data$Descr2 == "N3") #which are N3 epochs?
+          N3s <- N3s[c(beg_end[1] < N3s) & c(beg_end[2] > N3s)]
+          N3s <- N3s[c(N3s > RWN12s_start2[1])] # only N3s after start of 12min of R/W/N1/N2
+          
+          if (length(N3s) > 0){
+            if(length(N3s) == 1){
+              N3_start <- N3s
+            }else{
+              # find starting points of continuous N3 sequences
+              N3_start <- N3s[1]
+              for (kk in 1:(length(N3s)-1)){
+                if ((N3s[kk+1]-N3s[kk])>1){
+                  N3_start <- c(N3_start, N3s[kk+1]) #if there is a discontinuity in the sequence, mark the beginning of a new NREM sequence
+                }
+              }
+            }
+            
+            # select starting points of N3 closest following 12min of R/W/N1/2
+            RWN12s_start2 <- RWN12s_start2[RWN12s_start2<tail(N3_start,1)] # RWN12s episode must start before start of last N3
+            n <- NA
+            for (zzz in 1:length(RWN12s_start2)){
+              minpositive = function(x) min(x[x > 0])
+              val <- which(minpositive(N3_start - RWN12s_start2[zzz]) == (N3_start - RWN12s_start2[zzz]))
+              n <- c(n, val)
+            }
+            n <- na.omit(n)
+            N3_start2 <- N3_start[n] 
+            
+            # second NREMP starts with N3 following 12min of R/W/N1/2
+            if(length(N3_start2)>0){
+              data$CycleStart[c(N3_start2)] <- "NREMP"
+              
+              splits <- N3_start2 # all potential splitting points
+              splits <- unique(splits)
+              
+              # ask user if s/he is happy with the result of the splitting
+              # plot results
+              dfplot <- data
+              dfplot$time <- seq(1, nrow(dfplot)) # gives epochs
+              dfplot$Description[dfplot$Description == 1] <- -1
+              dfplot$Description[dfplot$Description == 2] <- -2
+              dfplot$Description[dfplot$Description == 3] <- -3
+              dfplot$Description[dfplot$Description == 5] <- 1
+              
+              pp <- ggplot(dfplot, aes(x=time, y=Description, colour=Description)) 
+              pp <- pp + theme_bw()+
+                geom_point() +
+                geom_line(aes(x=time, y=Description))+
+                ggtitle(as.character(filename))+
+                xlab("Time") +
+                ylab("Sleep Stage")+
+                scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
+                scale_color_viridis(name = "Sleep Stage", option = "D")+
+                geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
+                annotate(geom="text", x = 500, y = 2, label = paste("can split at epoch(s):", paste(splits, collapse = ","), sep = " "))
+              print(pp)
+              
+              # check if both NREM parts would still be >=20min 
+              part1 <- splits-beg_end[1]
+              part2 <- beg_end[2]-splits+1
+              print(paste0("When splitting at 1st/ 2nd/... suggestion, NREMP1 would be ", (as.character(part1/2)), "min.", 
+                           "and NREMP2 would be ", (as.character(part2/2)), "min.", sep = " "))
+              if (part1 < 30 | part2 <30){
+                message("BE CAREFUL: Splitting might result in NREM period that is shorter than 15 min.")
+              }
+              
+              # Ask about happiness level
+              val <- readline("Where do you want to split? Type the 1/2/3/n to select a suggestion or (n/skip). ") #  1 splits at 1st suggested epoch, n offers to choose, skip skips this night
+              
+              if(val == "skip"){
+                message("This period/night is skipped.")
+                next
+              }else if (val == "n"){
+                newperiod <- readline("At which epoch do you want to start the new NREM period instead? Please type epoch number or NA to not split. ") 
+                data$CycleStart[c(N3_start)] <- NA #rm old indicator
+                if (newperiod != "NA"){
+                  data$CycleStart[as.numeric(newperiod)] <- "NREMP"
+                }
+              }else if (val == "1" | val == "2" | val == "3" | val == "4" | val == "5" | val == "6" | val == "7" | val == "8" | val == "9" | val == "10"){
+                data$CycleStart[c(N3_start2)] <- NA #rm old indicator
+                y <- as.numeric(val)
+                data$CycleStart[N3_start2[y]] <- "NREMP"
+              }else{
+                message("Missing entry. This night is skipped.")
+              }
+              rm(dfplot, pp)
+            }else{
+              message("Cannot split. No N3 following 'lightening' of sleep has been detected.")
+            }
+          }else{
+            message("Cannot split. No N3 following 'lightening' of sleep has been detected.")
+          }
+        }else{
+          message("No 'lightening' of sleep or N3 detected after the onset of the NREMP. Cannot split.")
+        }
       }
-      rm(dfplot, pp)
+    }
+    
+    ## now check again if there are still NREMPs > 120min
+    ## is any NREM part (excl. wake) of a NREMP longer than 120min?
+    cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
+    
+    toolong <- NA
+    for (k in 2:length(cycs)){ 
+      subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
+      wake_eps <- sum(subset$Descr2 == "W")
+      if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #<= as cycs[k] is already the beginning of the REMP
+        toolong <- c(toolong, cycs[k-1])
+      }
+    }
+    toolong <- na.omit(toolong)
+    
+    ## now split NREMPs that are too long
+    if ((length(toolong) > 0)){
+      message("~ Still detected a NREMP > 120min. Let's go through the splitting process again. ~")
+      for (zz in 1:length(toolong)){
+        curr_toolong <- toolong[c(zz)]
+        
+        message(paste0("Attempting to split NREMP ", as.character(zz), " out of ", as.character(length(toolong)), "."))
+        
+        beg_end <- c(cycs[which(cycs==curr_toolong)], cycs[which(cycs==curr_toolong)+1]) #find beginning and end of NREMP that is too long
+        
+        # find RWN12 episodes that are > 12min within detected NREMP
+        RWN12s <- which(data$Descr2 == "RWN12") #which 30s epochs are R, W, or N1/2
+        RWN12s <- RWN12s[c(RWN12s>=beg_end[1] & RWN12s<=beg_end[2])] # search for R, W, N1, or N2 epochs between beginning and end of current NREMP
+        RWN12s_start <- NA
+        for (kk in 1:(length(RWN12s)-23)){
+          if (all(seq(RWN12s[kk],length.out = 24) == RWN12s[seq(kk,kk+23)])){ # check if the sequence of R, W, N12 epochs is continuous min. 12min
+            RWN12s_start <- c(RWN12s_start, RWN12s[kk])
+          }
+        }
+        RWN12s_start <- RWN12s_start[-c(1)] #first was NA, remove
+        rm(kk)
+        
+        RWN12s_start2 <- RWN12s_start[1]
+        for (kk in 1:(length(RWN12s_start)-1)){
+          if ((RWN12s_start[kk+1]-RWN12s_start[kk])>1){
+            RWN12s_start2 <- c(RWN12s_start2, RWN12s_start[kk+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
+          }
+        }
+        
+        # remove 12min period if it marks the beginning of the NREMP
+        RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2 > beg_end[1])]
+        
+        if (length(RWN12s_start2) > 0){ #only split if there is a lightening of sleep following the onset of the NREMP
+          # find N3 episodes within period to split
+          N3s <- which(data$Descr2 == "N3") #which are N3 epochs?
+          N3s <- N3s[c(beg_end[1] < N3s) & c(beg_end[2] > N3s)]
+          N3s <- N3s[c(N3s > RWN12s_start2[1])] # only N3s after start of 12min of R/W/N1/N2
+          
+          if (length(N3s) > 0){
+            if(length(N3s) == 1){
+              N3_start <- N3s
+            }else{
+              # find starting points of continuous N3 sequences
+              N3_start <- N3s[1]
+              for (kk in 1:(length(N3s)-1)){
+                if ((N3s[kk+1]-N3s[kk])>1){
+                  N3_start <- c(N3_start, N3s[kk+1]) #if there is a discontinuity in the sequence, mark the beginning of a new NREM sequence
+                }
+              }
+            }
+            
+            # select starting points of N3 closest following 12min of R/W/N1/2
+            RWN12s_start2 <- RWN12s_start2[RWN12s_start2<tail(N3_start,1)] # RWN12s episode must start before start of last N3
+            n <- NA
+            for (zzz in 1:length(RWN12s_start2)){
+              minpositive = function(x) min(x[x > 0])
+              val <- which(minpositive(N3_start - RWN12s_start2[zzz]) == (N3_start - RWN12s_start2[zzz]))
+              n <- c(n, val)
+            }
+            n <- na.omit(n)
+            N3_start2 <- N3_start[n] 
+            
+            # second NREMP starts with N3 following 12min of R/W/N1/2
+            if(length(N3_start2)>0){
+              data$CycleStart[c(N3_start2)] <- "NREMP"
+              
+              splits <- N3_start2 # all potential splitting points
+              splits <- unique(splits)
+              
+              # ask user if s/he is happy with the result of the splitting
+              # plot results
+              dfplot <- data
+              dfplot$time <- seq(1, nrow(dfplot)) # gives epochs
+              dfplot$Description[dfplot$Description == 1] <- -1
+              dfplot$Description[dfplot$Description == 2] <- -2
+              dfplot$Description[dfplot$Description == 3] <- -3
+              dfplot$Description[dfplot$Description == 5] <- 1
+              
+              pp <- ggplot(dfplot, aes(x=time, y=Description, colour=Description)) 
+              pp <- pp + theme_bw()+
+                geom_point() +
+                geom_line(aes(x=time, y=Description))+
+                ggtitle(as.character(filename))+
+                xlab("Time") +
+                ylab("Sleep Stage")+
+                scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
+                scale_color_viridis(name = "Sleep Stage", option = "D")+
+                geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
+                annotate(geom="text", x = 500, y = 2, label = paste("can split at epoch(s):", paste(splits, collapse = ","), sep = " "))
+              print(pp)
+              
+              # check if both NREM parts would still be >=20min 
+              part1 <- splits-beg_end[1]
+              part2 <- beg_end[2]-splits+1
+              print(paste0("When splitting at 1st/ 2nd/... suggestion, NREMP1 would be ", (as.character(part1/2)), "min.", 
+                           "and NREMP2 would be ", (as.character(part2/2)), "min.", sep = " "))
+              if (any(part1 < 30) | any(part2 <30)){
+                message("BE CAREFUL: Splitting might result in NREM period that is shorter than 15 min.")
+              }
+              
+              # Ask about happiness level
+              val <- readline("Where do you want to split? Type the 1/2/3/n to select a suggestion or (n/skip). ") #  1 splits at 1st suggested epoch, n offers to choose, skip skips this night
+              
+              if(val == "skip"){
+                message("This period/night is skipped.")
+                next
+              }else if (val == "n"){
+                newperiod <- readline("At which epoch do you want to start the new NREM period instead? Please type epoch number or NA to not split. ") 
+                data$CycleStart[c(N3_start)] <- NA #rm old indicator
+                if (newperiod != "NA"){
+                  data$CycleStart[as.numeric(newperiod)] <- "NREMP"
+                }
+              }else if (val == "1" | val == "2" | val == "3" | val == "4" | val == "5" | val == "6" | val == "7" | val == "8" | val == "9" | val == "10"){
+                data$CycleStart[c(N3_start2)] <- NA #rm old indicator
+                y <- as.numeric(val)
+                data$CycleStart[N3_start2[y]] <- "NREMP"
+              }else{
+                message("Missing entry. This night is skipped.")
+              }
+              rm(dfplot, pp)
+            }else{
+              message("Cannot split. No N3 following 'lightening' of sleep has been detected.")
+            }
+          }else{
+            message("Cannot split. No N3 following 'lightening' of sleep has been detected.")
+          }
+        }else{
+          message("No 'lightening' of sleep or N3 detected after the onset of the NREMP. Cannot split.")
+        }
+      }
     }
     
     
@@ -486,26 +695,31 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
     data$perc <- NA
     for (k in 1:length(cycs)){
       length <- nrow(subset(data, data$CycInfo == cycs[k]))
-      if ((length %% 10) == 0){
-        seq <- rep(length/10,10)
-        for (kk in 1:length(seq)){
-          if (kk == 1){
-            ind <- rep(kk, seq[kk])
-          }else{
-            ind <- c(ind, rep(kk, seq[kk]))
+      if(length >=10){ # only add percentiles if cycle is at least 10 epochs
+        if ((length %% 10) == 0){
+          seq <- rep(length/10,10)
+          for (kk in 1:length(seq)){
+            if (kk == 1){
+              ind <- rep(kk, seq[kk])
+            }else{
+              ind <- c(ind, rep(kk, seq[kk]))
+            }
           }
+          data$perc[which(data$CycInfo == cycs[k])] <- ind
+        }else{
+          seq <- sample(c(rep(floor(length/10), (10-length %% 10)), rep(ceiling(length/10), length %% 10))) #construct shuffled sequence of floor/ceiling rounded percentiles that matches the length of the complete cycle
+          for (kk in 1:length(seq)){
+            if (kk == 1){
+              ind <- rep(kk, seq[kk])
+            }else{
+              ind <- c(ind, rep(kk, seq[kk]))
+            }
+          }
+          data$perc[which(data$CycInfo == cycs[k])] <- ind
         }
-        data$perc[which(data$CycInfo == cycs[k])] <- ind
       }else{
-        seq <- sample(c(rep(floor(length/10), (10-length %% 10)), rep(ceiling(length/10), length %% 10))) #construct shuffled sequence of floor/ceiling rounded percentiles that matches the length of the complete cycle
-        for (kk in 1:length(seq)){
-          if (kk == 1){
-            ind <- rep(kk, seq[kk])
-          }else{
-            ind <- c(ind, rep(kk, seq[kk]))
-          }
-        }
-        data$perc[which(data$CycInfo == cycs[k])] <- ind
+        seq <- rep(1,length)
+        data$perc[which(data$CycInfo == cycs[k])] <- seq
       }
     }
     
@@ -563,7 +777,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, rm
         # scale_y_continuous(limits = c(-3,5), labels = c("N3", "N2", "N1", "W", "REM", "", "", "", ""))+
         scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1, 2, 3, 4, 5), labels = c("N3", "N2", "N1", "W", "REM", "", "", "", ""))+
         scale_color_viridis(name = "Sleep Stage", option = "D")+
-        geom_point(y = dfplot$CycInfo, size = 0.5)
+        geom_point(y = dfplot$CycInfo, size = 0.5, na.rm = T)
       
       savename <- paste0(c(name[1:(length(name)-2)]), sep = "_", collapse = "")
       savename <- paste(savename, "plot.png", sep = "")
