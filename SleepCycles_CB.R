@@ -95,8 +95,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
-          }
-          if (length(unique(data[,z])) == 6){
+          }else if (length(unique(data[,z])) == 6){
             if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
@@ -104,8 +103,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
-          }
-          if (length(unique(data[,z])) == 7){
+          }else if (length(unique(data[,z])) == 7){
             if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
@@ -113,6 +111,8 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
+          }else {
+            stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
           }
         }
       }else{
@@ -126,8 +126,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
-          }
-          if (length(unique(data[,z])) == 6){
+          }else if (length(unique(data[,z])) == 6){
             if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
@@ -135,8 +134,7 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
-          }
-          if (length(unique(data[,z])) == 7){
+          }else if (length(unique(data[,z])) == 7){
             if (all(as.numeric(sort(unique(data[,z]))) == sort(na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3))))){
               colnames(data)[z] <- "Description"
               cycles <- data
@@ -144,6 +142,8 @@ SleepCycles_CB <- function(p, files = NA, filetype = "vmrk", treat_as_W = NA, tr
               colnames(cycles)[z] <- "SleepCycle"
               break
             }
+          }else{
+            stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
           }
         }
       }
