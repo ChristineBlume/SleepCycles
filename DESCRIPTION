@@ -1,6 +1,6 @@
 Package: SleepCycles
 Title: Detects sleep cycles from sleep staging results
-Version: 0.1
+Version: 0.2
 Authors@R: 
     person(given = "Christine",
            family = "Blume",
