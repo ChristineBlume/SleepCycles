@@ -1,4 +1,6 @@
-#' @description Auxiliary function. Removes incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W) if rm_incompletecycs = T..
+endofnight <- list(
+  
+  #' @description Auxiliary function. Removes incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W) if rm_incompletecycs = T.
   
   rm.incompletecycs <- function(data){
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP") #remove NREM/W following last REMP or REM/W following last NREMP
@@ -36,7 +38,7 @@
       }
     }
     return(data)
-  }
+  },
   
 #' @description Auxiliary function. Removes (N)REM or W at the end of the night if criteria for another (N)REMP are not fulfilled.
   
@@ -133,3 +135,4 @@
     }
     return(data)
   }
+)

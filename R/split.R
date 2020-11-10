@@ -1,3 +1,5 @@
+split <- list(
+
 #' @description Auxiliary function. Checks if any NREM part (excluding Wake) of a NREM period is > 120 minutes.
   is.toolong <- function(data){
     ## is any NREM part (excl. wake) of a NREMP longer than 120min?
@@ -13,10 +15,10 @@
     }
     toolong <- na.omit(toolong)
     return(toolong)
-  }
+  },
   
 #' @description   Auxiliary function. Splits NREMPs that are too long (i.e., > 120 min). The function
-#' makes suggestions for splitting at N3 epoch(s) following "lightening" of sleep. The user can also 
+#' makes suggestions for splitting at N3 epoch(s) following "lightening" of sleep. The user can also
 #' decide to not split, enter a pre-defined epoch number to split at, or skip the night.
   
 toolong_split <- function(data, toolong){
@@ -43,7 +45,7 @@ toolong_split <- function(data, toolong){
     rm(kk)
     
     # do not consider 12min period as potential splitting point if it marks the beginning of the NREMP to be split
-    RWN12s_start2 <- RWN12s_start2[c(RWN12s_start2 > beg_end[1])]
+    RWN12s_start2 <- RWN12s_start[c(RWN12s_start > beg_end[1])]
     
     if (length(RWN12s_start2) > 0){ #only split if there is a lightening of sleep following the onset of the NREMP
       # find beginnings of >12min RWN12 sequences of 'lighter' sleep
@@ -153,3 +155,4 @@ toolong_split <- function(data, toolong){
   }
   return(data)
 }
+)

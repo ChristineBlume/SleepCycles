@@ -72,6 +72,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
   #----- list all files in directory
   if (filetype == "vmrk"){
     d <- list.files(p, pattern = "*.vmrk")
+    hd <- NA
   }else if (filetype == "txt"){
     d <- list.files(p, pattern = "*.txt")
     hd <- readline("Do your files have a header with row names (y/n)? ") #check if first line contains column namens
@@ -95,7 +96,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     filename <- d[i]
     
     ## load data
-    D <- load_data(filetype, treat_as_W, treat_as_N3)
+    D <- load_data(filetype, filename, treat_as_W, treat_as_N3, hd)
     data <- D[[1]]
     cycles <- D[[2]]
     rm(D)
@@ -111,12 +112,12 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     ## Loop through NREMWs 
     # check if the sequence of NREWM is continuous and the period is >=15min AND beginning is not wake -> first NREMP
     # Further: find discontinuities in the sequence (= potential beginnings of new NREM periods during the remaining night)
-    NREMWs_start2 <- find_NREMPs(NREMWs)
+    NREMWs_start2 <- find_NREMPs(NREMWs, data)
     data$CycleStart <- NA
     data$CycleStart[NREMWs_start2] <- "NREMP" #marks all potential NREM period beginnings
     
     ## Find REM episodes (first can be <5min, others have to be at least 5min)
-    REMs_start2 <- find_REMPs(REMs)
+    REMs_start2 <- find_REMPs(REMs, REMP_length, data)
     data$CycleStart[REMs_start2] <- "REMP"
     
     ## remove several NREMPs or REMPs in a row
@@ -170,14 +171,13 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     
     ## save new file
     svv <- paste(p, sv, sep = "/")
-    name <- unlist(stringr::str_split(filename, pattern = "_"))
-    savename <- paste0(c(name[1:(length(name)-1)]), sep = "_", collapse = "")
-    savename <- paste(savename, "SCycles.txt", sep = "")
+    name <- unlist(stringr::str_split(filename, pattern = "[.]"))[1]
+    savename <- paste(name, "SCycles.txt", sep = "_")
     write.table(cycles, file = paste(svv, savename, sep = "/"), row.names = F)
     
     ## plot results if desired
     if (plot == T){
-      plot_result(data, filetype)
+      plot_result(data, filetype, name, svv)
     }
   }
 }

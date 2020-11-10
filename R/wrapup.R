@@ -1,3 +1,5 @@
+wrapup <- list(
+
 addinfo1 <- function(data){
   # add cycle markers to file (only for NREM cycles)
   NREMPs <- which(data$CycleStart == "NREMP") #where do NREMPs begin?
@@ -29,7 +31,7 @@ addinfo1 <- function(data){
     }
   }
   return(data)
-}
+},
   
 #' @description Merge information about the cycle number and about NREMP vs. REMP. Add percentiles of NREM & REM parts.
   
@@ -72,16 +74,16 @@ addinfo1 <- function(data){
     }
     
     return(data)
-  }
+  },
   
 #' @description Plots result of the Sleep Cycle detection & saves plot.
   
-  plot_result <- function(data, filetype){
+  plot_result <- function(data, filetype, name, svv){
     dfplot <- data
     dfplot$time <- seq(1,nrow(dfplot))
-    if (filetype == "vmrk"){
-      dfplot$time2 <- (dfplot$Position/(1000/128))/(1000*60)
-    }
+    # if (filetype == "vmrk"){
+    #   dfplot$time2 <- (dfplot$Position/(1000/128))/(1000*60)
+    # }
     dfplot$Description[dfplot$Description == 1] <- -1
     dfplot$Description[dfplot$Description == 2] <- -2
     dfplot$Description[dfplot$Description == 3] <- -3
@@ -113,7 +115,7 @@ addinfo1 <- function(data){
       scale_color_viridis(name = "Sleep Stage", option = "D")+
       geom_point(y = dfplot$CycInfo, size = 0.5, na.rm = T)
     
-    savename <- paste0(c(name[1:(length(name)-2)]), sep = "_", collapse = "")
-    savename <- paste(savename, "plot.png", sep = "")
+    savename <- paste(name, "plot.png", sep = "_")
     ggplot2::ggsave(file=paste(svv, savename, sep = "/"), width = 25, height = 15, units = "cm", dpi = 600) 
   }
+)

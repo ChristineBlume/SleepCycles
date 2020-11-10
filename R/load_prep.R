@@ -1,6 +1,8 @@
 #' @description Auxiliary function. Loads data (text files or Brain Vision Analyzer Marker files) containing the sleep staging results.
 
-load_data <- function(filetype, treat_as_W, treat_as_N3){
+load_prep <- list(
+
+load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd){
   if (filetype == "vmrk"){
     header <- read.csv(filename, nrows = 1, header = F)
     data <- read.csv(filename, skip = 1) #each sleep stage refers to the 30s preceding the marker (irrespective of SR!)
@@ -85,7 +87,7 @@ load_data <- function(filetype, treat_as_W, treat_as_N3){
   }
   
   return(list(data, cycles))
-}
+},
 
 #' @description Auxiliary function. Recodes markers to be treated as W or N3. Additionally, stages are recoded/combined for further processing.
 
@@ -111,11 +113,11 @@ prep_data <- function(data, treat_as_W, treat_as_N3){
   data$Descr3[data$Description == 5] <- "REM"
   
   return(data)
-}
+},
 
 #' @description Auxiliary function. Finds the beginning of the first NREM period (>= 15min) at the beginning of the night and marks further potential (!) NREM periods.
 
-find_NREMPs <- function(NREMWs){
+find_NREMPs <- function(NREMWs, data){
   ## Find the first NREMP at the beginning of the night
   # check if the sequence of NREWM is continuous and the period is >=15min AND beginning is not wake
   NREMWs_start <- NA
@@ -136,10 +138,10 @@ find_NREMPs <- function(NREMWs){
     }
   }
   return(NREMWs_start2)
-}
+},
 
 #' @description Auxiliary function. Finds the beginning of the first REM period (no duration criterion) at the beginning of the night and marks further potential (!) REM periods.
-find_REMPs <- function(REMs){
+find_REMPs <- function(REMs, REMP_length, data){
   ## Find REM episodes (first can be <5min, others have to be at least 5min)
   REMs <- which(data$Descr3 == "REM") #which 30s epochs are NREM
   REMs_start <- REMs[1] #set first REM epoch as beginning of first REMP as there's no duration criterion for first REMP
@@ -157,7 +159,7 @@ find_REMPs <- function(REMs){
     }
   }
   return(REMs_start2)
-}
+},
 
 #' @description Auxiliary function. Deletes repetitions, i.e. if several NREMPs or REMPs come in a row
 delete_reps <- function(data){
@@ -172,3 +174,4 @@ delete_reps <- function(data){
   rm <- rm[c(-1)]
   return(rm)
 }
+)
