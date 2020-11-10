@@ -79,6 +79,8 @@ addinfo1 <- function(data){
 #' @description Plots result of the Sleep Cycle detection & saves plot.
   
   plot_result <- function(data, filetype, name, svv){
+    Description <- NULL #necessary to remove NOTE
+    
     dfplot <- data
     dfplot$time <- seq(1,nrow(dfplot))
     # if (filetype == "vmrk"){

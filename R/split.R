@@ -21,7 +21,8 @@ split <- list(
 #' makes suggestions for splitting at N3 epoch(s) following "lightening" of sleep. The user can also
 #' decide to not split, enter a pre-defined epoch number to split at, or skip the night.
   
-toolong_split <- function(data, toolong){
+toolong_split <- function(data, toolong, filename){
+  Description <- NULL #necessary to remove NOTE
   
   ## now split NREMPs that are too long
   for (zz in 1:length(toolong)){

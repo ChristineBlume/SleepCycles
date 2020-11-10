@@ -61,6 +61,9 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
 
   # # --- set a few things
   setwd(p)
+  filename <- NA
+  REMs <- NA
+  Description <- NA
 
   # check if there are result files of this function in the directory as they will mess with the code
   # stop code execution if they are found
@@ -128,7 +131,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     toolong <- is.toolong(data)
     ## now split NREMPs that are too long
     if (length(toolong) > 0){
-      data <- toolong_split(data, toolong)
+      data <- toolong_split(data, toolong, filename)
     }
     
     ## now check again if there are still NREMPs > 120min
@@ -139,7 +142,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     ## now split NREMPs that are too long
     if (length(toolong) > 0){
       message("~ Still detected a NREMP > 120min. Let's go through the splitting process again. ~")
-      data <- toolong_split(data, toolong)
+      data <- toolong_split(data, toolong, filename)
     }
 
     # -----------------------------------------------------------------------------
