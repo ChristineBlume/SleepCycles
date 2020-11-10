@@ -2,7 +2,7 @@
 
 load_prep <- list(
 
-load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd){
+load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
   if (filetype == "vmrk"){
     header <- read.csv(filename, nrows = 1, header = F)
     data <- read.csv(filename, skip = 1) #each sleep stage refers to the 30s preceding the marker (irrespective of SR!)
@@ -12,7 +12,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd){
     cycles$SleepStages <- data$Description
   }else if (filetype == "txt"){
     if (hd == "y"){ # does it have a header?
-      data <- read.table(filename, header = T)
+      data <- read.table(filename, header = T, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
           if (all(data[,2] %in% c(0,1,2,3,5))){
@@ -42,13 +42,13 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd){
             colnames(cycles)[z] <- "SleepCycle"
             cycles$SleepCycle <- NA
             break
+          }else{
+            stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
           }
-        }else{
-          stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
         }
       }
     }else{
-      data <- read.table(filename, header = F)
+      data <- read.table(filename, header = F, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
           if (all(data[,2] %in% c(0,1,2,3,5))){
