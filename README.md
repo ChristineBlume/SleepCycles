@@ -1,19 +1,4 @@
----
-title: "Introduction to the SleepCycles package"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Introduction to the SleepCycles package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  % \VignetteDepends{devtools}
----
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+# The SleepCycles Package
 
 ## Package and main function
 The SleepCycles package and its main function `SleepCycles()` is designed to detect sleep cycles and their respective NREM and REM parts (called (N)REM periods) from data that has been sleep staged according to AASM criteria. Additionally, each (N)REM part is split into percentiles. The function results in a plot visualising the results and creates a text file so the results can be used for further processing.
