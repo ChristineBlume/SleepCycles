@@ -94,7 +94,6 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
   #----- has a vector for a subset of files to be processed been specified?
   if (!all(is.na(files))){
     d <- d[files]
-    d <- d[d %in% files] 
   }
   
   #----- prepare results folder, create new directory
