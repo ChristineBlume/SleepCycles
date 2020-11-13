@@ -1,5 +1,5 @@
 Package: SleepCycles
-Title: Detects sleep cycles from sleep staging results
+Title: Sleep Cycle Detection
 Version: 0.5
 Authors@R: 
     person(given = "Christine",
@@ -17,6 +17,7 @@ Imports:
 	stringr,
 	viridis,
 	devtools
+Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
