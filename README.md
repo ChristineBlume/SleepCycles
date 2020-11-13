@@ -64,16 +64,3 @@ dir.create(newdir, showWarnings = FALSE)
 write.table(sleepstages2, file = paste(newdir, "sleepstages2.txt", sep = "/"),
 row.names=FALSE, col.names = TRUE, quote = FALSE, sep = ",")
 ```
-
-##### Run the detection
-Then, we apply the actual `SleepCycles` function. When we are prompted, we have to decide where we want to split the data, either at the first or the second suggested location. I would suggest selecting the fist, so when prompted, we simply type `1`.
-```{r echo=TRUE, warning=FALSE, results='asis', eval = FALSE} 
-SleepCycles::SleepCycles(newdir, filetype = "txt")
-
-## We again load the workspace image from before the code above was executed
-save.image(file=paste(tempdir(), "currsession.RData", sep = "/"))
-
-## we set the directory back to the one we were using before as we were just working in the  
-## temp directory.
-setwd(olddir)
-```

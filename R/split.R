@@ -9,6 +9,9 @@ split <- list(
     for (k in seq(2,length(cycs),2)){ #check every second one as only every second is a NREMP
       subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
       wake_eps <- sum(subset$Descr2 == "W")
+      if (all(is.na(wake_eps))){
+        wake_eps <- 0 #set 0 to avoid error in case none is found
+      } 
       if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #<= as cycs[2] (cf. line 7) is already the beginning of a REMP
         toolong <- c(toolong, cycs[k-1])
       }

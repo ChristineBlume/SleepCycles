@@ -84,7 +84,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     hd <- NA
   }else if (filetype == "txt"){
     d <- list.files(p, pattern = "*.txt")
-    hd <- readline("Do your files have a header with row names (y/n)? ") #check if first line contains column names
+    hd <- readline("Do your files have a header with column names (y/n)? ") #check if first line contains column names
     sp <- readline("Which separator do the files have? Choose one of the following: , or ; or tabulator.") #check which separator is used
     if (sp == "tabulator"){
       sp = "\t"
@@ -94,6 +94,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
   #----- has a vector for a subset of files to be processed been specified?
   if (!all(is.na(files))){
     d <- d[files]
+    d <- d[d %in% files] 
   }
   
   #----- prepare results folder, create new directory
