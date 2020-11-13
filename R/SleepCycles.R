@@ -140,6 +140,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     
     ## is any NREM part (excl. wake) of a NREMP longer than 120min?
     toolong <- is.toolong(data)
+    toolong1 <- toolong
     ## now split NREMPs that are too long
     if (length(toolong) > 0){
       data <- toolong_split(data, toolong, filename)
@@ -149,9 +150,10 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     ## is any NREM part (excl. wake) of a NREMP longer than 120min?
     rm(toolong)
     toolong <- is.toolong(data)
+    toolong2 <- toolong
     
     ## now split NREMPs that are too long
-    if (length(toolong) > 0){
+    if (length(toolong) > 0 & all(toolong2 != toolong1)){
       message("~ Still detected a NREMP > 120min. Let's go through the splitting process again. ~")
       data <- toolong_split(data, toolong, filename)
     }
