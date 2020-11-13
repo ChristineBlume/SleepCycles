@@ -1,6 +1,6 @@
 Package: SleepCycles
 Title: Sleep Cycle Detection
-Version: 0.5
+Version: 0.6
 Authors@R: 
     person(given = "Christine",
            family = "Blume",
