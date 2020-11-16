@@ -16,18 +16,24 @@ creates a text file so the results can be used for further processing.
 
 Sleep cycles are largely detected according to the originally proposed
 criteria by Feinberg & Floyd (1979). NREM periods are periods starting
-with N1 with a minimal duration of 15min (can include W, up to \<5min
-REM). REM following a NREM period always represents a potential REM
-period, however any REMP must be at least 5min long (except the first
-REMP, for which no minimum duration criterion is applied). If a NREMP
-exceeds 120min in duration (excl. wake), it can be split into 2 parts.
-The new cycle starts with the first N3 episode following a phase
-(\>12min) with any other stage than N3, that is a lightening of sleep
-(cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010). The
-function makes suggestions where splitting could be done according to
-these criteria. However, the code also offers the possibility to provide
-a numeric value for an epoch at which to split or you can also decide to
-not split at all.
+with N1 (or W following a REM period) with a minimal duration of 15min
+(can include W, up to \<5min REM, except for the first REMP, for which
+there is no minimum duration criterion). REM following a NREM period
+always represents a potential REM period, however any REMP must be at
+least 5min long (except the first REMP, for which no minimum duration
+criterion is applied). If a NREMP exceeds 120min in duration (excl.
+wake), it can be split into 2 parts. The new cycle starts with the first
+N3 episode following a phase (\>12min) with any other stage than N3,
+that is a lightening of sleep (cf. Rudzik et al., 2020; Jenni et al.,
+2004; Kurth et al., 2010). The function makes suggestions where
+splitting could be done according to these criteria and visualises the
+potential splitting points on top of a hypnogram. The user can then
+interactively choose where to split the NREMP. However, the code also
+offers the possibility to provide a numeric value for an epoch at which
+to split or you can also decide to not split at all. A combination of a
+NREMP and the following REMP represents one sleep cycle, except for the
+case when a NREMP is split. In this case, the first of the two resulting
+NREMPs represents a sleep cycle (without REM).
 
 ### Requirements
 
@@ -51,10 +57,10 @@ not divisible by 10 (i.e., 203 epochs), one epoch is added to
 percentiles in a randomized fashion to reach the correct length of a
 period (i.e., 7 percentiles comprised 20 epochs, 3 comprised 21).
 
-The code offers to choose whether incomplete cycles should be removed at
-the end of the night (argument `rm_incompletecycs`, default = FALSE).
-Incomplete cycles are defined by cycles that are followed by \<5min NREM
-or W (e.g. because a participant is woken up).
+The code offers to choose whether incomplete periods should be removed
+at the end of the night (argument `rm_incomplete_period`, default =
+FALSE). Incomplete periods are defined by periods that are followed by
+\<5min NREM or W (e.g. because a participant is woken up).
 
 Although this is not encouraged, for some participants it may be
 necessary to decrease the minimum duration of REM from 5min to 4 or
@@ -80,8 +86,8 @@ files for Brain Vision Analyzer Software).
 ‘wake’. Default: NA  
 `treat_as_N3` numeric vector indicating which values should be treated
 as ‘N3’. Default: NA  
-`rm_incompletecycs` logical: should incomplete cycles at the end of the
-night be removed? Default: F.  
+`rm_incomplete_period` logical: should incomplete periods at the end of
+the night be removed? Default: F.  
 `plot` logical: should a plot for the result of the detection procedure
 be generated and saved? Default: T.  
 `REMP_length` numeric value specifying the minimum duration of a REM

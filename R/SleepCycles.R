@@ -1,13 +1,14 @@
 #' @title Sleep Cycle Detection  
 #'
-#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979). 
-#' NREM periods are periods starting with N1 with a minimal duration of 15min (can include W, up to <5min REM). 
-#' REM following a NREM period always represents a potential REM period, however any REMP must be at least
+#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) from sleep staging results. 
+#' NREM periods are periods starting with N1 (or W following a REM period) with a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP, 
+#' for which there is no minimum duration criterion). REM following a NREM period always represents a potential REM period (REMP), however any REMP must be at least
 #' 5min (except the first REMP, for which no minimum duration criterion is applied). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
 #' The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3, that is
 #' a lightening of sleep (cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010). The code makes suggestions where
-#' splitting could take place according to the criteria. However, the code also offers the possibility to provide a numeric value for an epoch 
-#' at which to split or you can decide to not split at all.
+#' splitting could take place according to the criteria and visualises the potential splitting points on top of a hypnogram. The user can then interactively choose where to split the NREMP. However, the code also offers the possibility to provide a numeric value for an epoch 
+#' at which to split or you can decide to not split at all. A combination of a NREMP and the following REMP represents one sleep cycle, except for the case when a NREMP is split.
+#' In this case, the first of the two resulting NREMPs represents a sleep cycle (without REM).
 #' 
 #' The function requires any sleep staging results file with a column, in which the sleep stages are coded 
 #' in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern (i.e., a numeric vector). The user can define other integers to be handled as W or N3
@@ -18,7 +19,7 @@
 #' length of a period is not divisible by 10 (i.e., 203 epochs), one epoch is added to percentiles in a randomized
 #' fashion to reach the correct length of a period (i.e., 7 percentiles comprised 20 epochs, 3 comprised 21).
 #' 
-#' The code offers to choose whether incomplete cycles should be removed at the end of the night (rm_incompletecycs, default = F). Incomplete cycles are defined by cycles that are followed
+#' The code offers to choose whether incomplete periods should be removed at the end of the night (rm_incomplete_period, default = F). Incomplete periods are defined by cycles that are followed
 #' by <5min NREM or W (e.g. because a participant is woken up).
 #'
 #' Although this is not encouraged, for some participants it may be necessary to decrease the minimum duration of REM from 5min to 4 or 4.5min
@@ -38,9 +39,9 @@
 #' @param filetype character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).
 #' @param treat_as_W numeric vector indicating which values should be treated as 'wake'. Default: NA
 #' @param treat_as_N3 numeric vector indicating which values should be treated as 'N3'. Default: NA
-#' @param rm_incompletecycs logical: should incomplete cycles at the end of the night be removed? Default: F.
+#' @param rm_incomplete_period logical: should incomplete period at the end of the night be removed? Default: F.
 #' @param plot logical: should a plot for the result of the detection procedure be generated and saved? Default: T.
-#' @param REMP_length numeric value specifying the minimum duration of a REM period. Default is 10 segments (i.e. 5 minutes). Decreasing the min. length is not encouraged and should only be done following careful consideration.
+#' @param REMP_length numeric value specifying the minimum duration of a REM period following the first REM period. Default is 10 segments (i.e. 5 minutes). Decreasing the min. length is not encouraged and should only be done following careful consideration.
 #'
 #' @return Saves results of the detection in a results folder in 'p'. The resulting textfile contains the sleepstages in a column named 'SleepStages', the sleep cycles in 
 #' a column 'SleepCycles' (numeric value indicating the cycle number), information on whether it is a NREM or REM period (numeric value in column 'N_REM', 0 = NREM, 1 = REM), and an indicator of the percentiles
@@ -63,7 +64,7 @@
 #' setwd(olddir)
 #'
 #' @export
-SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incompletecycs = F, plot = T, REMP_length = 10){
+SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incomplete_period = F, plot = T, REMP_length = 10){
 
   # # --- set a few things
   setwd(p)
@@ -164,11 +165,11 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     data <- addinfo1(data)
     
     # remove incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W)
-    if (rm_incompletecycs == T){
-      data  <- rm.incompletecycs(data)
+    if (rm_incomplete_period == T){
+      data  <- rm.incompleteperiod(data)
     
     #remove NREM/W following last REMP (in case no new NREMP begins) or REM/W following last NREMP  (in case no new REMP begins)
-    }else if (rm_incompletecycs == F){
+    }else if (rm_incomplete_period == F){
       data <- clean_endofnight(data)
     }
     

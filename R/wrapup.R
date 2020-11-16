@@ -83,9 +83,6 @@ addinfo1 <- function(data){
     
     dfplot <- data
     dfplot$time <- seq(1,nrow(dfplot))
-    # if (filetype == "vmrk"){
-    #   dfplot$time2 <- (dfplot$Position/(1000/128))/(1000*60)
-    # }
     dfplot$Description[dfplot$Description == 1] <- -1
     dfplot$Description[dfplot$Description == 2] <- -2
     dfplot$Description[dfplot$Description == 3] <- -3
@@ -110,12 +107,13 @@ addinfo1 <- function(data){
       theme_bw()+
       geom_point() +
       geom_line(aes(x=time, y=Description))+
-      xlab("Time") +
+      xlab("Epoch") +
       ylab("Sleep Stage")+
-      # scale_y_continuous(limits = c(-3,5), labels = c("N3", "N2", "N1", "W", "REM", "", "", "", ""))+
       scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1, 2, 3, 4, 5), labels = c("N3", "N2", "N1", "W", "REM", "", "", "", ""))+
       scale_color_viridis(name = "Sleep Stage", option = "D")+
-      geom_point(y = dfplot$CycInfo, size = 0.5, na.rm = T)
+      geom_point(y = dfplot$CycInfo, size = 0.5, na.rm = T)+
+      theme(legend.position = "none")+
+      theme(plot.margin = unit(c(.5,.5,.5,.5), "cm"))
     
     savename <- paste(name, "plot.png", sep = "_")
     ggplot2::ggsave(file=paste(svv, savename, sep = "/"), width = 25, height = 15, units = "cm", dpi = 600) 

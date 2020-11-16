@@ -143,7 +143,7 @@ find_NREMPs <- function(NREMWs, data){
 #' @description Auxiliary function. Finds the beginning of the first REM period (no duration criterion) at the beginning of the night and marks further potential (!) REM periods.
 find_REMPs <- function(REMs, REMP_length, data){
   ## Find REM episodes (first can be <5min, others have to be at least 5min)
-  REMs <- which(data$Descr3 == "REM") #which 30s epochs are NREM
+  REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
   REMs_start <- REMs[1] #set first REM epoch as beginning of first REMP as there's no duration criterion for first REMP
   for (k in 1:(length(REMs)-(REMP_length-1))){
     if (all(seq(REMs[k],length.out = REMP_length) == REMs[seq(k,k+(REMP_length-1))])){ # check if the sequence of min. 10 REM epochs is continuous

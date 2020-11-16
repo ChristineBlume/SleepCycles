@@ -2,21 +2,47 @@ split <- list(
 
 #' @description Auxiliary function. Checks if any NREM part (excluding Wake) of a NREM period is > 120 minutes.
   is.toolong <- function(data){
-    ## is any NREM part (excl. wake) of a NREMP longer than 120min?
-    cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
+    # check if the first period is actually a REM period
+    NREM1 <- which(data$CycleStart == "NREMP")
+    REM1 <- which(data$CycleStart == "REMP")
     
-    toolong <- NA
-    for (k in seq(2,length(cycs),2)){ #check every second one as only every second is a NREMP
-      subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
-      wake_eps <- sum(subset$Descr2 == "W")
-      if (all(is.na(wake_eps))){
-        wake_eps <- 0 #set 0 to avoid error in case none is found
-      } 
-      if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #<= as cycs[2] (cf. line 7) is already the beginning of a REMP
-        toolong <- c(toolong, cycs[k-1])
+    if(REM1[1] < NREM1[1]){
+      ## REMP precedes first NREMP (i.e., REM onset)
+      message("ATTENTION: first REM period precedes NREM period!")
+      
+      ## is any NREM part (excl. wake) of a NREMP longer than 120min?
+      cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
+      
+      toolong <- NA
+      for (k in seq(3,length(cycs),2)){ #check every second one as only every second is a NREMP
+        subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
+        wake_eps <- sum(subset$Descr2 == "W")
+        if (all(is.na(wake_eps))){
+          wake_eps <- 0 #set 0 to avoid error in case none is found
+        } 
+        if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #>= as cycs[2] (cf. line 7) is already the beginning of a REMP
+          toolong <- c(toolong, cycs[k-1])
+        }
       }
+      toolong <- na.omit(toolong)
+    }else{
+      ## NREMP precedes first REMP as expected
+      ## is any NREM part (excl. wake) of a NREMP longer than 120min?
+      cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
+      
+      toolong <- NA
+      for (k in seq(2,length(cycs),2)){ #check every second one as only every second is a NREMP
+        subset <- data[c(cycs[k-1]:(cycs[k]-1)),]
+        wake_eps <- sum(subset$Descr2 == "W")
+        if (all(is.na(wake_eps))){
+          wake_eps <- 0 #set 0 to avoid error in case none is found
+        } 
+        if (((cycs[k]-cycs[k-1])-wake_eps)>=240){ #>= as cycs[2] (cf. line 7) is already the beginning of a REMP
+          toolong <- c(toolong, cycs[k-1])
+        }
+      }
+      toolong <- na.omit(toolong)
     }
-    toolong <- na.omit(toolong)
     return(toolong)
   },
   
@@ -87,6 +113,11 @@ toolong_split <- function(data, toolong, filename){
           n <- c(n, val)
         }
         n <- na.omit(n)
+        
+        # added 16/11/20: do not consider first N3 within NREMP
+        if (N3_start[1] == N3s[1]){ #N3_start contains starting points of continuous N3 sequences within NREMP to split
+          n <- n[-c(1)]
+        }
         N3_start2 <- N3_start[n] 
         
         # second NREMP starts with N3 following 12min of R/W/N1/2
@@ -110,12 +141,14 @@ toolong_split <- function(data, toolong, filename){
             geom_point() +
             geom_line(aes(x=time, y=Description))+
             ggtitle(as.character(filename))+
-            xlab("Time") +
+            xlab("Epoch") +
             ylab("Sleep Stage")+
             scale_y_continuous(limits = c(-3,2), breaks = c(-3, -2, -1, 0, 1), labels = c("N3", "N2", "N1", "W", "REM"))+
             scale_color_viridis(name = "Sleep Stage", option = "D")+
             geom_vline(xintercept = c(splits), lty = 2, colour = "red")+
-            annotate(geom="text", x = 500, y = 2, label = paste("can split at epoch(s):", paste(splits, collapse = ","), sep = " "))
+            theme(legend.position = "none")+
+            annotate(geom="text", x = 500, y = 2, label = paste("can split at epoch(s):", paste(splits, collapse = ","), sep = " "))+
+            theme(plot.margin = unit(c(.5,.5,.5,.5), "cm"))
           print(pp)
           
           # check if both NREM parts would still be >=20min 

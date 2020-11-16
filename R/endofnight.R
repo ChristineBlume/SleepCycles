@@ -1,8 +1,8 @@
 endofnight <- list(
   
-  #' @description Auxiliary function. Removes incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W) if rm_incompletecycs = T.
+  #' @description Auxiliary function. Removes incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W) if rm_incomplete_period = T.
   
-  rm.incompletecycs <- function(data){
+  rm.incompleteperiod <- function(data){
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP") #remove NREM/W following last REMP or REM/W following last NREMP
     if (data$CycleStart[cycs[length(cycs)]] == "REMP"){
       REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
