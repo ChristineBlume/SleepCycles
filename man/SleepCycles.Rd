@@ -55,9 +55,9 @@ in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern (i.e., a numeric vecto
 Staging must be in 30s epochs. Besides text files, it can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default) or "vmrk").
 }
 \details{
-Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles. In case the
-length of a period is not divisible by 10 (i.e., 203 epochs), one epoch is added to percentiles in a randomized
-fashion to reach the correct length of a period (i.e., 7 percentiles comprised 20 epochs, 3 comprised 21).
+Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles.
+In case the length of a period is not divisible by 10 (e.g., 203 epochs), one epoch is added to percentiles in a randomized fashion to reach the correct
+length of a period (here: 7 percentiles of 20 epochs, 3 of 21 epochs).
 
 The code offers to choose whether incomplete periods should be removed at the end of the night (rm_incomplete_period, default = F). Incomplete periods are defined by cycles that are followed
 by <5min NREM or W (e.g. because a participant is woken up).
@@ -78,6 +78,18 @@ write.table(sleepstages, file = paste(newdir, "sleepstages.vmrk", sep = "/"),
 row.names=FALSE, col.names = FALSE, quote = FALSE, sep = ",")
 SleepCycles(newdir, filetype = "vmrk")
 setwd(olddir)
+
+\dontrun{
+# Dataset that requires splitting of a NREMP
+data(sleepstages2)
+olddir <- getwd()
+newdir <- file.path(tempdir(),"SleepCycles_exmpl2")
+dir.create(newdir, showWarnings = FALSE)
+write.table(sleepstages2, file = paste(newdir, "sleepstages2.txt", sep = "/"),
+            row.names=FALSE, col.names = TRUE, quote = FALSE, sep = ",")
+SleepCycles(newdir, filetype = "txt")
+setwd(olddir)
+}
 
 }
 \references{

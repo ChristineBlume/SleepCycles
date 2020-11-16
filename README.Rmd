@@ -23,7 +23,7 @@ Sleep cycles are largely detected according to the originally proposed criteria 
 The function requires any sleep staging results file with a column, in which the sleep stages are coded in the usual numeric 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern (i.e., a numeric vector). The user can define other integers to be handled as W or N3 (i.e. in the case stagings were done according to the Rechtschaffen & Kales criteria including S3 and S4). The presence of further columns, e.g. a 'time' column, is not an issue. Staging must be in 30s epochs. Besides text files, the `SleepCycles()` function can also handle marker files for the Brain Vision Analyzer. The input file type can be indicated with the `filetype` argument (`filetype = "txt"` (default) or `filetype = "vmrk"`).
 
 #### Details
-Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles. In case the length of a period is not divisible by 10 (i.e., 203 epochs), one epoch is added to percentiles in a randomized fashion to reach the correct length of a period (i.e., 7 percentiles comprised 20 epochs, 3 comprised 21).
+Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles. In case the length of a period is not divisible by 10 (e.g., 203 epochs), one epoch is added to percentiles in a randomized fashion to reach the correct length of a period (here: 7 percentiles of 20 epochs, 3 of 21 epochs).
 
 The code offers to choose whether incomplete periods should be removed at the end of the night (argument `rm_incomplete_period`, default = FALSE). Incomplete periods are defined by periods that are followed by <5min NREM or W (e.g. because a participant is woken up).
 

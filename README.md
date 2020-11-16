@@ -53,9 +53,9 @@ Brain Vision Analyzer. The input file type can be indicated with the
 
 Besides sleep cycles (NREM-REM), the result also splits the NREM and REM
 parts of each cycle in percentiles. In case the length of a period is
-not divisible by 10 (i.e., 203 epochs), one epoch is added to
+not divisible by 10 (e.g., 203 epochs), one epoch is added to
 percentiles in a randomized fashion to reach the correct length of a
-period (i.e., 7 percentiles comprised 20 epochs, 3 comprised 21).
+period (here: 7 percentiles of 20 epochs, 3 of 21 epochs).
 
 The code offers to choose whether incomplete periods should be removed
 at the end of the night (argument `rm_incomplete_period`, default =
