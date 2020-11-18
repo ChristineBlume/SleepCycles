@@ -161,7 +161,7 @@ toolong_split <- function(data, toolong, filename){
           }
           
           # Ask about happiness level
-          val <- readline("Where do you want to split? Type the 1/2/3/... to select a suggestion, n to split at specific epoch or not at all, or skip to skip this night for now. ") #  1 splits at 1st suggested epoch, n offers to choose, skip skips this night
+          val <- readline("Where do you want to split? Type the 1/2/3/... to select a suggestion, n to split at a specific epoch or not at all, or skip to skip this night for now. ") #  1 splits at 1st suggested epoch, n offers to choose, skip skips this night
           
           if(val == "skip"){
             message("This period/night is skipped.")
