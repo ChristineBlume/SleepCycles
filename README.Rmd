@@ -44,7 +44,7 @@ By default, the function produces and saves a plot for visual inspection of the 
 `REMP_length` numeric value specifying the minimum duration of a REM period. Default is 10 segments (i.e. 5 minutes). Decreasing the min. length is not encouraged and should only be done following careful consideration  
 
 ### Worked example
-First, we install and load the package if we haven't done so. The package is currently still hosted on GitHub, wherefore installation requires the `devtools` package to be installed first. Note that `install.github` will automatically check for changes.
+First, we install and load the package if we haven't done so. We will install the latest version from GitHub, wherefore installation requires the `devtools` package to be installed first. Note that `install.github` will automatically check for changes.
 ```{r setup, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE}
 ## First, we save your current workspace
 save.image(file=paste(tempdir(), "currsession.RData", sep = "/"))
