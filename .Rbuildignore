@@ -1,2 +1,7 @@
 ^pkg\.Rproj$
 ^\.Rproj\.user$
+^cran-comments\.md$
+^README\.Rmd$
+^README\.html$
+^NEWS\.Rmd$
+^NEWS\.html$
