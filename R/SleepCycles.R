@@ -30,8 +30,8 @@
 #' By default, the function produces and saves a plot for visual inspection of the results.
 #' 
 #' @references Feinberg, I. and Floyd, T.C. (1979), Systematic Trends Across the Night in Human Sleep Cycles. Psychophysiology, 16: 283-291. https://doi.org/10.1111/j.1469-8986.1979.tb02991.x
-#' @references Rudzik, F., Thiesse, L., Pieren, R., Héritier, H., Eze I.c., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., Röösli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
-#' @references Jenni, O.E., Carskadon, M.A.. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774–783. https://doi.org/10.1093/sleep/27.4.774
+#' @references Rudzik, F., Thiesse, L., Pieren, R., Heritier, H., Eze I.C., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., R��sli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
+#' @references Jenni, O.E., Carskadon, M.A.. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
 #' @references Kurth, S., Ringli, M., Geiger, A., LeBourgeois, M., Jenni, O.G., Huber, R. (2010). Mapping of Cortical Activity in the First Two Decades of Life: A High-Density Sleep Electroencephalogram Study. Journal of Neuroscience. 30 (40) 13211-13219; DOI: 10.1523/JNEUROSCI.2532-10.2010 
 #'
 #' @param p character vector indicating the directory containing the sleep staging files
@@ -39,8 +39,8 @@
 #' @param filetype character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).
 #' @param treat_as_W numeric vector indicating which values should be treated as 'wake'. Default: NA
 #' @param treat_as_N3 numeric vector indicating which values should be treated as 'N3'. Default: NA
-#' @param rm_incomplete_period logical: should incomplete period at the end of the night be removed? Default: F.
-#' @param plot logical: should a plot for the result of the detection procedure be generated and saved? Default: T.
+#' @param rm_incomplete_period logical: should incomplete period at the end of the night be removed? Default: FALSE.
+#' @param plot logical: should a plot for the result of the detection procedure be generated and saved? Default: TTRUE.
 #' @param REMP_length numeric value specifying the minimum duration of a REM period following the first REM period. Default is 10 segments (i.e. 5 minutes). Decreasing the min. length is not encouraged and should only be done following careful consideration.
 #'
 #' @return Saves results of the detection in a results folder in 'p'. The resulting textfile contains the sleepstages in a column named 'SleepStages', the sleep cycles in 
@@ -63,7 +63,7 @@
 #' SleepCycles(newdir, filetype = "vmrk")
 #' setwd(olddir)
 #' 
-#' \dontrun{
+#' \donttest{
 #' # Dataset that requires splitting of a NREMP
 #' data(sleepstages2)
 #' olddir <- getwd()
@@ -76,9 +76,12 @@
 #' }
 #'
 #' @export
-SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incomplete_period = F, plot = T, REMP_length = 10){
+SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incomplete_period = FALSE, plot = TRUE, REMP_length = 10){
 
   # # --- set a few things
+  oldwd <- getwd()
+  on.exit(setwd(oldwd))
+  
   setwd(p)
   filename <- NA
   REMs <- NA
@@ -177,11 +180,11 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     data <- addinfo1(data)
     
     # remove incomplete NREM-REM cycle at the end of the night (i.e., cycles followed by <5min NREM or W)
-    if (rm_incomplete_period == T){
+    if (rm_incomplete_period == TRUE){
       data  <- rm.incompleteperiod(data)
     
     #remove NREM/W following last REMP (in case no new NREMP begins) or REM/W following last NREMP  (in case no new REMP begins)
-    }else if (rm_incomplete_period == F){
+    }else if (rm_incomplete_period == FALSE){
       data <- clean_endofnight(data)
     }
     
@@ -204,7 +207,7 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     write.table(cycles, file = paste(svv, savename, sep = "/"), row.names = F)
     
     ## plot results if desired
-    if (plot == T){
+    if (plot == TRUE){
       plot_result(data, filetype, name, svv)
     }
   }

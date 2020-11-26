@@ -5,3 +5,4 @@
 ^README\.html$
 ^NEWS\.Rmd$
 ^NEWS\.html$
+^CRAN-RELEASE$

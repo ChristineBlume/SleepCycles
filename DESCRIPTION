@@ -1,13 +1,13 @@
 Package: SleepCycles
 Title: Sleep Cycle Detection
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person(given = "Christine",
            family = "Blume",
            role = c("aut", "cre"),
            email = "christine.blume@sbg.ac.at",
            comment = c(ORCID = "0000-0003-2328-9612"))
-Description: Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979). 
+Description: Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) <doi:https://doi.org/10.1111/j.1469-8986.1979.tb02991.x> . 
 License: GPL-3
 Encoding: UTF-8
 Imports: 

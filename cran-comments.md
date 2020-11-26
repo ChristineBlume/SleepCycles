@@ -18,3 +18,6 @@ There was 1 NOTE:
 
 ## Downstream dependencies
 I have also run R CMD check on downstream dependencies.
+
+## Comments resulting from submission of version 1.0.0
+All comments and suggestions have been fixed. Thanks for the checks!

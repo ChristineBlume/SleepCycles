@@ -4,7 +4,7 @@ load_prep <- list(
 
 load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
   if (filetype == "vmrk"){
-    header <- read.csv(filename, nrows = 1, header = F)
+    header <- read.csv(filename, nrows = 1, header = FALSE)
     data <- read.csv(filename, skip = 1) #each sleep stage refers to the 30s preceding the marker (irrespective of SR!)
     cycles <- data
     cycles[,1] <- "SleepCycle"
@@ -12,7 +12,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
     cycles$SleepStages <- data$Description
   }else if (filetype == "txt"){
     if (hd == "y"){ # does it have a header?
-      data <- read.table(filename, header = T, sep = sp)
+      data <- read.table(filename, header = TRUE, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
           if (all(data[,2] %in% c(0,1,2,3,5))){
@@ -48,7 +48,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
         }
       }
     }else{
-      data <- read.table(filename, header = F, sep = sp)
+      data <- read.table(filename, header = FALSE, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
           if (all(data[,2] %in% c(0,1,2,3,5))){
