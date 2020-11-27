@@ -1,6 +1,6 @@
 #' @title Sleep Cycle Detection  
 #'
-#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) from sleep staging results. 
+#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen (2020) <arXiv:> from sleep staging results. 
 #' NREM periods are periods starting with N1 (or W following a REM period) with a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP, 
 #' for which there is no minimum duration criterion). REM following a NREM period always represents a potential REM period (REMP), however any REMP must be at least
 #' 5min (except the first REMP, for which no minimum duration criterion is applied). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
@@ -30,7 +30,7 @@
 #' By default, the function produces and saves a plot for visual inspection of the results.
 #' 
 #' @references Feinberg, I. and Floyd, T.C. (1979), Systematic Trends Across the Night in Human Sleep Cycles. Psychophysiology, 16: 283-291. https://doi.org/10.1111/j.1469-8986.1979.tb02991.x
-#' @references Rudzik, F., Thiesse, L., Pieren, R., Heritier, H., Eze I.C., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., Röösli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
+#' @references Rudzik, F., Thiesse, L., Pieren, R., Heritier, H., Eze I.C., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., Roeoesli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
 #' @references Jenni, O.E., Carskadon, M.A.. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
 #' @references Kurth, S., Ringli, M., Geiger, A., LeBourgeois, M., Jenni, O.G., Huber, R. (2010). Mapping of Cortical Activity in the First Two Decades of Life: A High-Density Sleep Electroencephalogram Study. Journal of Neuroscience. 30 (40) 13211-13219; DOI: 10.1523/JNEUROSCI.2532-10.2010 
 #'
@@ -63,7 +63,7 @@
 #' SleepCycles(newdir, filetype = "vmrk")
 #' setwd(olddir)
 #' 
-#' \donttest{
+#' \dontrun{
 #' # Dataset that requires splitting of a NREMP
 #' data(sleepstages2)
 #' olddir <- getwd()

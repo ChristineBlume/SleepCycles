@@ -19,5 +19,6 @@ There was 1 NOTE:
 ## Downstream dependencies
 I have also run R CMD check on downstream dependencies.
 
-## Comments resulting from submission of version 1.0.0
-All comments and suggestions have been fixed. Thanks for the checks!
+## Comments resulting from first submission to CRAN (v 1.0.0)
+All but one comments and suggestions have been fixed. Thanks for the checks!
+Dontrun cannot be replaced by donttest as this example requires interaction between the user and the example. The missing input will result in an error.
