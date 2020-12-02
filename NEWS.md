@@ -5,6 +5,11 @@ The SleepCycles package
 
 ## News
 
+### SleepCycles 1.0.1 (2020-02-12)
+
+No changes since version 0.8. This is the first version available on
+CRAN.
+
 ### SleepCycles 1.0.0 (2020-24-11)
 
 No changes since version 0.8. This is the first version available on
