@@ -17,18 +17,6 @@ There was 1 NOTE:
     Feinberg (10:97)
 
   This is a spurious NOTE.
-  
-*  Found the following (possibly) invalid URLs:
-  URL: arXiv:10.31219/osf.io/r2q8v
-    From: man/SleepCycles.Rd
-    Message: Invalid URI scheme
-      
-  This is a doi entered in the format <arXiv:> as instructed.
-  
-*  The Description field contains the following (possibly) invalid arXiv id:
-    10.31219/osf.io/r2q8v
-    
-  This is a doi entered in the format <arXiv:> as instructed.
 
 * This is a new release.
 

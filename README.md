@@ -16,25 +16,25 @@ creates a text file so the results can be used for further processing.
 
 Sleep cycles are largely detected according to the originally proposed
 criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen
-(2020) <doi:10.31219/osf.io/r2q8v>. NREM periods are periods starting
-with N1 (or W following a REM period) with a minimal duration of 15min
-(can include W, up to \<5min REM, except for the first REMP, for which
-there is no minimum duration criterion). REM following a NREM period
-always represents a potential REM period, however any REMP must be at
-least 5min long (except the first REMP, for which no minimum duration
-criterion is applied). If a NREMP exceeds 120min in duration (excl.
-wake), it can be split into 2 parts. The new cycle starts with the first
-N3 episode following a phase (\>12min) with any other stage than N3,
-that is a lightening of sleep (cf. Rudzik et al., 2020; Jenni et al.,
-2004; Kurth et al., 2010). The function makes suggestions where
-splitting could be done according to these criteria and visualises the
-potential splitting points on top of a hypnogram. The user can then
-interactively choose where to split the NREMP. However, the code also
-offers the possibility to provide a numeric value for an epoch at which
-to split or you can also decide to not split at all. A combination of a
-NREMP and the following REMP represents one sleep cycle, except for the
-case when a NREMP is split. In this case, the first of the two resulting
-NREMPs represents a sleep cycle (without REM).
+(2020) . NREM periods are periods starting with N1 (or W following a REM
+period) with a minimal duration of 15min (can include W, up to \<5min
+REM, except for the first REMP, for which there is no minimum duration
+criterion). REM following a NREM period always represents a potential
+REM period, however any REMP must be at least 5min long (except the
+first REMP, for which no minimum duration criterion is applied). If a
+NREMP exceeds 120min in duration (excl. wake), it can be split into 2
+parts. The new cycle starts with the first N3 episode following a phase
+(\>12min) with any other stage than N3, that is a lightening of sleep
+(cf. Rudzik et al., 2020; Jenni et al., 2004; Kurth et al., 2010). The
+function makes suggestions where splitting could be done according to
+these criteria and visualises the potential splitting points on top of a
+hypnogram. The user can then interactively choose where to split the
+NREMP. However, the code also offers the possibility to provide a
+numeric value for an epoch at which to split or you can also decide to
+not split at all. A combination of a NREMP and the following REMP
+represents one sleep cycle, except for the case when a NREMP is split.
+In this case, the first of the two resulting NREMPs represents a sleep
+cycle (without REM).
 
 ### Requirements
 

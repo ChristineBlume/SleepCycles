@@ -12,7 +12,7 @@ CRAN.
 
 ### SleepCycles 1.0.0 (2020-24-11)
 
-No changes since version 0.8. This is the first version available on
+No changes since version 0.8. This is the first version submitted to
 CRAN.
 
 ### SleepCycles 0.8 (2020-18-11)
