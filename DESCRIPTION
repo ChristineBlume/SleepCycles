@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "christine.blume@sbg.ac.at",
            comment = c(ORCID = "0000-0003-2328-9612"))
-Description: Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) <doi:10.1111/j.1469-8986.1979.tb02991.x> as described in Blume & Cajochen (2020) <arXiv:10.31219/osf.io/r2q8v>. 
+Description: Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) <doi:10.1111/j.1469-8986.1979.tb02991.x> as described in Blume & Cajochen (2020) <doi:10.31219/osf.io/r2q8v>. 
 License: GPL-3
 Encoding: UTF-8
 Imports: 
