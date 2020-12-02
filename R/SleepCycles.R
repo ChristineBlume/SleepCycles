@@ -1,6 +1,6 @@
 #' @title Sleep Cycle Detection  
 #'
-#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen (2020) <arXiv:> from sleep staging results. 
+#' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen (2020) <arXiv:https://doi.org/10.31219/osf.io/r2q8v> from sleep staging results. 
 #' NREM periods are periods starting with N1 (or W following a REM period) with a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP, 
 #' for which there is no minimum duration criterion). REM following a NREM period always represents a potential REM period (REMP), however any REMP must be at least
 #' 5min (except the first REMP, for which no minimum duration criterion is applied). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
