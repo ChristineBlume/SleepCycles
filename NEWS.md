@@ -8,8 +8,10 @@ The SleepCycles package
 ### SleepCycles 1.0.2 (2021-18-02)
 
 Bug fix: in the load\_prep.R function, which resulted in an error when
-input files had less than two columns. Enhancement: the user can now
-also specify csv files as input files to the SleepCycles() function.
+input files had less than two columns. Bug fix: in the unlikely event
+that there is only one REM sleep episode, the code resulted in an error.
+This has been fixed. Enhancement: the user can now also specify csv
+files as input files to the SleepCycles() function.
 
 ### SleepCycles 1.0.1 (2020-02-12)
 

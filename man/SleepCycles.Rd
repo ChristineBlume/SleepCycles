@@ -20,7 +20,7 @@ SleepCycles(
 
 \item{files}{numeric vector indicating which files in 'p' to process. Default: NA}
 
-\item{filetype}{character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).}
+\item{filetype}{character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "csv", or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).}
 
 \item{treat_as_W}{numeric vector indicating which values should be treated as 'wake'. Default: NA}
 
@@ -52,7 +52,7 @@ In this case, the first of the two resulting NREMPs represents a sleep cycle (wi
 The function requires any sleep staging results file with a column, in which the sleep stages are coded
 in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern (i.e., a numeric vector). The user can define other integers to be handled as W or N3
 (i.e. in the case stagings were done according to the Rechtschaffen and Kales criteria including S3 and S4). The presence of further columns in the data is not an issue.
-Staging must be in 30s epochs. Besides text files, it can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default) or "vmrk").
+Staging must be in 30s epochs. Besides text files, it can also handle csv files and marker files for the Brain Vision Analyzer (filetype = "txt" (default), "csv", or "vmrk").
 }
 \details{
 Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles.
@@ -97,7 +97,7 @@ Feinberg, I. and Floyd, T.C. (1979), Systematic Trends Across the Night in Human
 
 Rudzik, F., Thiesse, L., Pieren, R., Heritier, H., Eze I.C., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., Roeoesli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
 
-Jenni, O.E., Carskadon, M.A.. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
+Jenni, O.E., Carskadon, M.A. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
 
 Kurth, S., Ringli, M., Geiger, A., LeBourgeois, M., Jenni, O.G., Huber, R. (2010). Mapping of Cortical Activity in the First Two Decades of Life: A High-Density Sleep Electroencephalogram Study. Journal of Neuroscience. 30 (40) 13211-13219; DOI: 10.1523/JNEUROSCI.2532-10.2010
 }

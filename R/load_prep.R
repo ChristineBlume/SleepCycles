@@ -47,7 +47,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
           }
         }
       }
-    }else{
+    }else if (hd == "n"){ # does it have a header?{
       data <- read.table(filename, header = FALSE, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
@@ -145,17 +145,24 @@ find_REMPs <- function(REMs, REMP_length, data){
   ## Find REM episodes (first can be <5min, others have to be at least 5min)
   REMs <- which(data$Descr3 == "REM") #which 30s epochs are REM
   REMs_start <- REMs[1] #set first REM epoch as beginning of first REMP as there's no duration criterion for first REMP
-  for (k in 1:(length(REMs)-(REMP_length-1))){
-    if (all(seq(REMs[k],length.out = REMP_length) == REMs[seq(k,k+(REMP_length-1))])){ # check if the sequence of min. 10 REM epochs is continuous
-      REMs_start <- c(REMs_start, REMs[k])
+  
+  # now check other potential REMPs regarding their length
+  if ((length(REMs)-(REMP_length-1)) >=0){ #added 17/02/21 to prevent code from crashing in unlikely case that there is no REMP after first
+    for (k in 1:(length(REMs)-(REMP_length-1))){
+      if (all(seq(REMs[k],length.out = REMP_length) == REMs[seq(k,k+(REMP_length-1))])){ # check if the sequence of min. 10 REM epochs is continuous
+        REMs_start <- c(REMs_start, REMs[k])
+      }
     }
+    REMs_start <- unique(REMs_start)
   }
-  REMs_start <- unique(REMs_start)
   
   REMs_start2 <- REMs_start[1]  #REMs_start[1] = start of the first REMP (no duration criterion)
-  for (k in 1:(length(REMs_start)-1)){
-    if ((REMs_start[k+1]-REMs_start[k])>1){
-      REMs_start2 <- c(REMs_start2, REMs_start[k+1]) #if there is an discontinuity in the sequence, mark the beginning of a new NREM sequence
+  
+  if (length(REMs_start) > 1){ # only check for more REMPs if there is more than 1 potential REMP
+    for (k in 1:(length(REMs_start)-1)){
+      if ((REMs_start[k+1]-REMs_start[k])>1){
+        REMs_start2 <- c(REMs_start2, REMs_start[k+1]) #if there is an discontinuity in the sequence, mark the beginning of a new REM period
+      }
     }
   }
   return(REMs_start2)
