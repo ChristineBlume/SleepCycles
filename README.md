@@ -45,10 +45,10 @@ define other integers to be handled as W or N3 (i.e. in the case
 stagings were done according to the Rechtschaffen & Kales criteria
 including S3 and S4). The presence of further columns, e.g. a ‘time’
 column, is not an issue. Staging must be in 30s epochs. Besides text
-files, the `SleepCycles()` function can also handle marker files for the
-Brain Vision Analyzer. The input file type can be indicated with the
-`filetype` argument (`filetype = "txt"` (default) or `filetype =
-"vmrk"`).
+files, the `SleepCycles()` function can also handle csv and marker files
+for the Brain Vision Analyzer. The input file type can be indicated with
+the `filetype` argument (`filetype = "txt"` (default) or `filetype =
+"csv"` or `filetype = "vmrk"`).
 
 #### Details
 
@@ -81,8 +81,8 @@ staging files
 `files` numeric vector indicating which files in ‘p’ to process.
 Default: NA  
 `filetype` character indicating file type of the files containing the
-sleep staging results. Can be “txt” (default) or “vmrk” (i.e., marker
-files for Brain Vision Analyzer Software).  
+sleep staging results. Can be “txt” (default) or “csv” or “vmrk” (i.e.,
+marker files for Brain Vision Analyzer Software).  
 `treat_as_W` numeric vector indicating which values should be treated as
 ‘wake’. Default: NA  
 `treat_as_N3` numeric vector indicating which values should be treated

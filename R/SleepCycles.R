@@ -31,7 +31,7 @@
 #' 
 #' @references Feinberg, I. and Floyd, T.C. (1979), Systematic Trends Across the Night in Human Sleep Cycles. Psychophysiology, 16: 283-291. https://doi.org/10.1111/j.1469-8986.1979.tb02991.x
 #' @references Rudzik, F., Thiesse, L., Pieren, R., Heritier, H., Eze I.C., Foraster, M., Vienneau, D., Brink, M., Wunderli, J.M., Probst-Hensch, N., Roeoesli, M., Fulda, S., Cajochen, C. (2020). Ultradian modulation of cortical arousals during sleep: effects of age and exposure to nighttime transportation noise. Sleep, Volume 43, Issue 7. https://doi.org/10.1093/sleep/zsz324
-#' @references Jenni, O.E., Carskadon, M.A.. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
+#' @references Jenni, O.E., Carskadon, M.A. (2004). Spectral Analysis of the Sleep Electroencephalogram During Adolescence. Sleep, Volume 27, Issue 4, Pages 774-783. https://doi.org/10.1093/sleep/27.4.774
 #' @references Kurth, S., Ringli, M., Geiger, A., LeBourgeois, M., Jenni, O.G., Huber, R. (2010). Mapping of Cortical Activity in the First Two Decades of Life: A High-Density Sleep Electroencephalogram Study. Journal of Neuroscience. 30 (40) 13211-13219; DOI: 10.1523/JNEUROSCI.2532-10.2010 
 #'
 #' @param p character vector indicating the directory containing the sleep staging files
