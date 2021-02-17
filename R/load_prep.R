@@ -10,12 +10,12 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
     cycles[,1] <- "SleepCycle"
     cycles[,2] <- NA
     cycles$SleepStages <- data$Description
-  }else if (filetype == "txt"){
+  }else if (filetype == "txt" | filetype == "csv" ){ # csv files were added on 17/02/21
     if (hd == "y"){ # does it have a header?
       data <- read.table(filename, header = TRUE, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
-          if (all(data[,2] %in% c(0,1,2,3,5))){
+          if (all(data[,z] %in% c(0,1,2,3,5))){ # bug fix 17/02/21: used to be if (all(data[,2] %in% c(0,1,2,3,5))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description
@@ -24,7 +24,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
             break
           }
         }else if (length(unique(data[,z])) == 6){
-          if (all(data[,2] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
+          if (all(data[,z] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description
@@ -35,7 +35,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
             stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
           }
         }else if (length(unique(data[,z])) == 7){
-          if (all(data[,2] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
+          if (all(data[,z] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description
@@ -51,7 +51,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
       data <- read.table(filename, header = FALSE, sep = sp)
       for (z in 1:ncol(data)){
         if (length(unique(data[,z])) == 5){
-          if (all(data[,2] %in% c(0,1,2,3,5))){
+          if (all(data[,z] %in% c(0,1,2,3,5))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description
@@ -60,7 +60,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
             break
           }
         }else if (length(unique(data[,z])) == 6){
-          if (all(data[,2] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
+          if (all(data[,z] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description
@@ -71,7 +71,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
             stop("Please check your file. The vector with the staging seems to contain other numbers than the sleep stages or the numbers you want to treat as a sleep stage.")
           }
         }else if (length(unique(data[,z])) == 7){
-          if (all(data[,2] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
+          if (all(data[,z] %in% na.omit(c(0,1,2,3,5,treat_as_W, treat_as_N3)))){
             colnames(data)[z] <- "Description"
             cycles <- data
             cycles$SleepStages <- data$Description

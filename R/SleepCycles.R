@@ -13,7 +13,7 @@
 #' The function requires any sleep staging results file with a column, in which the sleep stages are coded 
 #' in the usual 0,1,2,3,5 (i.e., W, N1, N2, N3, REM) pattern (i.e., a numeric vector). The user can define other integers to be handled as W or N3
 #' (i.e. in the case stagings were done according to the Rechtschaffen and Kales criteria including S3 and S4). The presence of further columns in the data is not an issue.
-#' Staging must be in 30s epochs. Besides text files, it can also handle marker files for the Brain Vision Analyzer (filetype = "txt" (default) or "vmrk").
+#' Staging must be in 30s epochs. Besides text files, it can also handle csv files and marker files for the Brain Vision Analyzer (filetype = "txt" (default), "csv", or "vmrk").
 
 #' @details Besides sleep cycles (NREM-REM), the result also splits the NREM and REM parts of each cycle in percentiles. 
 #' In case the length of a period is not divisible by 10 (e.g., 203 epochs), one epoch is added to percentiles in a randomized fashion to reach the correct 
@@ -36,7 +36,7 @@
 #'
 #' @param p character vector indicating the directory containing the sleep staging files
 #' @param files numeric vector indicating which files in 'p' to process. Default: NA
-#' @param filetype character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).
+#' @param filetype character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "csv", or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).
 #' @param treat_as_W numeric vector indicating which values should be treated as 'wake'. Default: NA
 #' @param treat_as_N3 numeric vector indicating which values should be treated as 'N3'. Default: NA
 #' @param rm_incomplete_period logical: should incomplete period at the end of the night be removed? Default: FALSE.
@@ -101,9 +101,22 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
   }else if (filetype == "txt"){
     d <- list.files(p, pattern = "*.txt")
     hd <- readline("Do your files have a header with column names (y/n)? ") #check if first line contains column names
-    sp <- readline("Which separator do the files have? Choose one of the following: , or ; or tabulator.") #check which separator is used
+    sp <- readline("Which separator do the files have? Choose one of the following: NA or , or ; or tabulator. If the data only contains one column, write NA.") #check which separator is used
     if (sp == "tabulator"){
       sp = "\t"
+    }
+    if (sp == "NA"){
+      sp = ""
+    }
+  }else if (filetype == "csv"){
+    d <- list.files(p, pattern = "*.csv") # csv files were added on 17/02/21
+    hd <- readline("Do your files have a header with column names (y/n)? ") #check if first line contains column names
+    sp <- readline("Which separator do the files have? Choose one of the following: , or ; or tabulator. If the data only contains one column, write NA.") #check which separator is used
+    if (sp == "tabulator"){
+      sp = "\t"
+    }
+    if (sp == "NA"){
+      sp = ""
     }
   }
   
