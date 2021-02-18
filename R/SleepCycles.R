@@ -1,7 +1,7 @@
 #' @title Sleep Cycle Detection  
 #'
 #' @description Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen (2020) \doi{10.31219/osf.io/r2q8v} from sleep staging results. 
-#' NREM periods are periods starting with N1 (or W following a REM period) with a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP, 
+#' NREM periods are periods starting with N1 (default) or N2 at the beginning of the night and W or another NREM stage following a REM period. NREMPs have a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP, 
 #' for which there is no minimum duration criterion). REM following a NREM period always represents a potential REM period (REMP), however any REMP must be at least
 #' 5min (except the first REMP, for which no minimum duration criterion is applied). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts. 
 #' The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3, that is
@@ -35,6 +35,7 @@
 #' @references Kurth, S., Ringli, M., Geiger, A., LeBourgeois, M., Jenni, O.G., Huber, R. (2010). Mapping of Cortical Activity in the First Two Decades of Life: A High-Density Sleep Electroencephalogram Study. Journal of Neuroscience. 30 (40) 13211-13219; DOI: 10.1523/JNEUROSCI.2532-10.2010 
 #'
 #' @param p character vector indicating the directory containing the sleep staging files
+#' @param sleepstart character vector indicating whether the first NREMP at the beginning of the night should start with N1 or N2. Default: N1
 #' @param files numeric vector indicating which files in 'p' to process. Default: NA
 #' @param filetype character indicating file type of the files containing the sleep staging results. Can be "txt" (default) or "csv", or "vmrk" (i.e., marker files for Brain Vision Analyzer Software).
 #' @param treat_as_W numeric vector indicating which values should be treated as 'wake'. Default: NA
@@ -76,7 +77,7 @@
 #' }
 #'
 #' @export
-SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incomplete_period = FALSE, plot = TRUE, REMP_length = 10){
+SleepCycles <- function(p, sleepstart = "N1", files = NA, filetype = "txt", treat_as_W = NA, treat_as_N3 = NA, rm_incomplete_period = FALSE, plot = TRUE, REMP_length = 10){
 
   # # --- set a few things
   oldwd <- getwd()
@@ -149,7 +150,14 @@ SleepCycles <- function(p, files = NA, filetype = "txt", treat_as_W = NA, treat_
     # Find NREM periods: start with N1 and can then also include W. >=15min
     NREMWs <- which(data$Descr3 == "NREM"| data$Descr3 == "W") #which 30s epochs are NREM or wake
     NREMs <- which(data$Descr3 == "NREM")
-    NREMWs <- subset(NREMWs, NREMWs >= NREMs[1]) # exclude W at the beginning of the night before the first NREM epoch
+    first_N2 <- which(data$Description == 2)[1] # for option to have first NREMP start with N2
+    
+    # exclude W or W/N1 at the beginning of the night before the first NREM epoch
+    if (sleepstart == "N1"){
+      NREMWs <- subset(NREMWs, NREMWs >= NREMs[1]) 
+    }else if (sleepstart == "N2"){
+      NREMWs <- subset(NREMWs, NREMWs >= first_N2) 
+    }
     
     ## Loop through NREMWs 
     # check if the sequence of NREWM is continuous and the period is >=15min AND beginning is not wake -> first NREMP
