@@ -6,6 +6,7 @@
 \usage{
 SleepCycles(
   p,
+  sleepstart = "N1",
   files = NA,
   filetype = "txt",
   treat_as_W = NA,
@@ -17,6 +18,8 @@ SleepCycles(
 }
 \arguments{
 \item{p}{character vector indicating the directory containing the sleep staging files}
+
+\item{sleepstart}{character vector indicating whether the first NREMP at the beginning of the night should start with N1 or N2. Default: N1}
 
 \item{files}{numeric vector indicating which files in 'p' to process. Default: NA}
 
@@ -40,7 +43,7 @@ no percentiles are calculated (all epochs are coded as '1' in the 'percentile' c
 }
 \description{
 Sleep cycles are largely detected according to the originally proposed criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen (2020) \doi{10.31219/osf.io/r2q8v} from sleep staging results.
-NREM periods are periods starting with N1 (or W following a REM period) with a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP,
+NREM periods are periods starting with N1 (default) or N2 at the beginning of the night and W or another NREM stage following a REM period. NREMPs have a minimal duration of 15min (can include W, up to <5min REM, except for the first REMP,
 for which there is no minimum duration criterion). REM following a NREM period always represents a potential REM period (REMP), however any REMP must be at least
 5min (except the first REMP, for which no minimum duration criterion is applied). If a NREMP exceeds 120min in duration (excl. wake), it can be split into 2 parts.
 The new cycle then starts with the first N3 episode following a phase (>12min) with any other stage than N3, that is
