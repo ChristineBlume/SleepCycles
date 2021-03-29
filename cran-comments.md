@@ -5,11 +5,7 @@
 
 ## R CMD check results
 
-There was 1 NOTE:
-
-* checking for future file timestamps, unable to verify current time.
-  
-  This is a spurious NOTE due to http://worldclockapi.com/ not being available.
+There were no ERRORs or WARNINGs or NOTES.
 
 ## Checks using R-hub
 
