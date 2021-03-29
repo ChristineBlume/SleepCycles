@@ -1,0 +1,14 @@
+citHeader("To cite SleepCycles in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "'SleepCycles' package for R - A free software tool for the detection of sleep cycles from sleep staging",
+  author   = "Blume, C. & Cajochen, C.",
+  journal  = "MethodsX",
+  year     = "2021",
+  doi      = "https://doi.org/10.1016/j.mex.2021.101318",
+  url      = "https://www.sciencedirect.com/science/article/pii/S2215016121001114?via%3Dihub",
+  textVersion = paste(
+
+  )
+)

@@ -8,7 +8,7 @@ The SleepCycles package
 ### SleepCycles 1.1.1 (2021-29-03)
 
 Updated the reference and doi to the companion paper by Blume &
-Cajochen.
+Cajochen. Created a CITATION file for the publication.
 
 ### SleepCycles 1.1.0 (2021-18-02)
 

@@ -16,7 +16,7 @@ creates a text file so the results can be used for further processing.
 
 Sleep cycles are largely detected according to the originally proposed
 criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen
-(2020) . NREM periods are periods starting with N1 (default) or N2 at
+(2021) . NREM periods are periods starting with N1 (default) or N2 at
 the beginning of the night and W or another NREM stage following a REM
 period. NREMPs have a minimal duration minimal duration of 15min (can
 include W, up to \<5min REM, except for the first REMP, for which there

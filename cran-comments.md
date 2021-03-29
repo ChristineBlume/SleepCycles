@@ -5,21 +5,29 @@
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs or NOTES. 
+There was 1 NOTE:
+
+* checking for future file timestamps, unable to verify current time.
+  
+  This is a spurious NOTE due to http://worldclockapi.com/ not being available.
 
 ## Checks using R-hub
 
-There were no ERRORs or WARNINGs or NOTES. 
+There was 1 NOTE:
 
-* This is a new release.
+* Found the following (possibly) invalid DOIs: DOI: https://doi.org/10.1016/j.mex.2021.101318
+  
+  The DOI is valid, this is a spurious NOTE.
 
 ## Downstream dependencies
 
 I have also run R CMD check on downstream dependencies.
 
+
 ## Comments resulting from previous submission to CRAN (v 1.1.0)
 
 There were no ERRORs or WARNINGs or NOTES. 
+
 
 ## Comments resulting from previous submission to CRAN (v 1.0.1)
 
