@@ -6,7 +6,7 @@ citEntry(
   author   = "Blume C., Cajochen C.",
   journal  = "MethodsX",
   year     = "2021",
-  doi      = "https://doi.org/10.1016/j.mex.2021.101318",
+  doi      = "10.1016/j.mex.2021.101318",
   url      = "https://www.sciencedirect.com/science/article/pii/S2215016121001114?via%3Dihub",
   textVersion = paste(
 

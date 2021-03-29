@@ -13,11 +13,7 @@ There was 1 NOTE:
 
 ## Checks using R-hub
 
-There was 1 NOTE:
-
-* Found the following (possibly) invalid DOIs: DOI: https://doi.org/10.1016/j.mex.2021.101318
-  
-  The DOI is valid, this is a spurious NOTE.
+There were no ERRORs or WARNINGs or NOTES.
 
 ## Downstream dependencies
 
