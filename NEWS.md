@@ -5,7 +5,12 @@ The SleepCycles package
 
 ## News
 
-### SleepCycles 1.0.2 (2021-18-02)
+### SleepCycles 1.1.1 (2021-29-03)
+
+Updated the reference and doi to the companion paper by Blume &
+Cajochen.
+
+### SleepCycles 1.1.0 (2021-18-02)
 
 Bug fix: the load\_prep.R function resulted in an error when input files
 had less than two columns, this has been fixed. Bug fix: in the unlikely
