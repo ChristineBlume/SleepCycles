@@ -5,6 +5,11 @@ The SleepCycles package
 
 ## News
 
+### SleepCycles 1.1.2 (2021-25-04)
+
+Enhancement: now also files in which a sleep stage (e.g. N3) is missing
+can be read in.
+
 ### SleepCycles 1.1.1 (2021-29-03)
 
 Updated the reference and doi to the companion paper by Blume &

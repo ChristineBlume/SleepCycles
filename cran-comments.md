@@ -15,11 +15,13 @@ There were no ERRORs or WARNINGs or NOTES.
 
 I have also run R CMD check on downstream dependencies.
 
+## Comments resulting from previous submission to CRAN (v 1.1.1)
+
+There were no ERRORs or WARNINGs or NOTES. 
 
 ## Comments resulting from previous submission to CRAN (v 1.1.0)
 
 There were no ERRORs or WARNINGs or NOTES. 
-
 
 ## Comments resulting from previous submission to CRAN (v 1.0.1)
 

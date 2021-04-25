@@ -14,7 +14,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
     if (hd == "y"){ # does it have a header?
       data <- read.table(filename, header = TRUE, sep = sp)
       for (z in 1:ncol(data)){
-        if (length(unique(data[,z])) == 5){
+        if (length(unique(data[,z])) <= 5){ # fix 25 04 21: used to be == 5
           if (all(data[,z] %in% c(0,1,2,3,5))){ # bug fix 17/02/21: used to be if (all(data[,2] %in% c(0,1,2,3,5))){
             colnames(data)[z] <- "Description"
             cycles <- data
@@ -50,7 +50,7 @@ load_data <- function(filetype, filename, treat_as_W, treat_as_N3, hd, sp){
     }else if (hd == "n"){ # does it have a header?{
       data <- read.table(filename, header = FALSE, sep = sp)
       for (z in 1:ncol(data)){
-        if (length(unique(data[,z])) == 5){
+        if (length(unique(data[,z])) <= 5){ # fix 25 04 21: used to be == 5
           if (all(data[,z] %in% c(0,1,2,3,5))){
             colnames(data)[z] <- "Description"
             cycles <- data
