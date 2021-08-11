@@ -5,6 +5,10 @@ The SleepCycles package
 
 ## News
 
+### SleepCycles 1.1.3 (2021-11-08)
+
+Code in the Readme file that violated CRAN policy has been replaced.
+
 ### SleepCycles 1.1.2 (2021-25-04)
 
 Enhancement: now also files in which a sleep stage (e.g. N3) is missing

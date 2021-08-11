@@ -19,13 +19,13 @@ criteria by Feinberg & Floyd (1979) and as described in Blume & Cajochen
 (2021) . NREM periods are periods starting with N1 (default) or N2 at
 the beginning of the night and W or another NREM stage following a REM
 period. NREMPs have a minimal duration minimal duration of 15min (can
-include W, up to \<5min REM, except for the first REMP, for which there
-is no minimum duration criterion). REM following a NREM period always
-represents a potential REM period, however any REMP must be at least
-5min long (except the first REMP, for which no minimum duration
+include W, up to &lt;5min REM, except for the first REMP, for which
+there is no minimum duration criterion). REM following a NREM period
+always represents a potential REM period, however any REMP must be at
+least 5min long (except the first REMP, for which no minimum duration
 criterion is applied). If a NREMP exceeds 120min in duration (excl.
 wake), it can be split into 2 parts. The new cycle starts with the first
-N3 episode following a phase (\>12min) with any other stage than N3,
+N3 episode following a phase (&gt;12min) with any other stage than N3,
 that is a lightening of sleep (cf. Rudzik et al., 2020; Jenni et al.,
 2004; Kurth et al., 2010). The function makes suggestions where
 splitting could be done according to these criteria and visualises the
@@ -48,8 +48,8 @@ including S3 and S4). The presence of further columns, e.g. a ‘time’
 column, is not an issue. Staging must be in 30s epochs. Besides text
 files, the `SleepCycles()` function can also handle csv and marker files
 for the Brain Vision Analyzer. The input file type can be indicated with
-the `filetype` argument (`filetype = "txt"` (default) or `filetype =
-"csv"` or `filetype = "vmrk"`).
+the `filetype` argument (`filetype = "txt"` (default) or
+`filetype = "csv"` or `filetype = "vmrk"`).
 
 #### Details
 
@@ -62,7 +62,7 @@ period (here: 7 percentiles of 20 epochs, 3 of 21 epochs).
 The code offers to choose whether incomplete periods should be removed
 at the end of the night (argument `rm_incomplete_period`, default =
 FALSE). Incomplete periods are defined by periods that are followed by
-\<5min NREM or W (e.g. because a participant is woken up).
+&lt;5min NREM or W (e.g. because a participant is woken up).
 
 Although this is not encouraged, for some participants it may be
 necessary to decrease the minimum duration of REM from 5min to 4 or
@@ -100,19 +100,14 @@ consideration
 
 ### Worked example
 
-First, we install and load the package if we haven’t done so. We will
-install the latest version from GitHub, wherefore installation requires
-the `devtools` package to be installed first. Note that `install.github`
-will automatically check for changes.
+First, we install and load the package if we haven’t done so.
 
 ``` r
 ## First, we save your current workspace
 save.image(file=paste(tempdir(), "currsession.RData", sep = "/"))
-## make sure you start with a clean session, loaded packages might cause problems.
+## make sure you start with a clean session.
 rm(list = ls(all = TRUE))
-install.packages("devtools", repos = "http://cran.us.r-project.org")
-library(devtools)
-devtools::install_github("ChristineBlume/SleepCycles")
+install.packages("SleepCycles", repos = "http://cran.us.r-project.org")
 ```
 
 Then, we are ready to use the package on our data set. Note that in the

@@ -1,6 +1,6 @@
 ## Test environments
-* local R installation, R 4.0.4
-* ubuntu 16.04 (on travis-ci), R 4.0.4
+* local R installation, R 4.1.0
+* Ubuntu Linux 20.04.1 LTS, R-release, GCC, R 4.0.4
 * win-builder (devel)
 
 ## R CMD check results
@@ -14,6 +14,10 @@ There were no ERRORs or WARNINGs or NOTES.
 ## Downstream dependencies
 
 I have also run R CMD check on downstream dependencies.
+
+## Comments resulting from previous submission to CRAN (v 1.1.2)
+
+There were no ERRORs or WARNINGs or NOTES. 
 
 ## Comments resulting from previous submission to CRAN (v 1.1.1)
 

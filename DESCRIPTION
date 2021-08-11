@@ -1,6 +1,6 @@
 Package: SleepCycles
 Title: Sleep Cycle Detection
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: 
     person(given = "Christine",
            family = "Blume",
@@ -15,8 +15,7 @@ Imports:
 	reshape2,
 	plyr,
 	stringr,
-	viridis,
-	devtools
+	viridis
 Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)

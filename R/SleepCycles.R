@@ -49,7 +49,7 @@
 #' of the (N)REM period of the cycle (numeric value in 'percentile' column; 1 = first percentile, 2 = second percentile, etc.). In case a (N)REM period is less than 10 epochs long,
 #' no percentiles are calculated (all epochs are coded as '1' in the 'percentile' column).
 #'
-#' @import ggplot2 reshape2 plyr stringr viridis devtools
+#' @import ggplot2 reshape2 plyr stringr viridis
 #' 
 #' @importFrom stats na.omit time
 #' @importFrom utils data glob2rx head read.csv read.table tail write.table
