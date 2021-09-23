@@ -5,6 +5,11 @@ The SleepCycles package
 
 ## News
 
+### SleepCycles 1.1.4 (2021-22-09)
+
+Build Engine for the Vignette changed from knitr to rmarkdown to solve
+an issue with vignette building under
+
 ### SleepCycles 1.1.3 (2021-11-08)
 
 Code in the Readme file that violated CRAN policy has been replaced.

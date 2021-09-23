@@ -47,7 +47,7 @@ By default, the function produces and saves a plot for visual inspection of the 
 
 ### Worked example
 First, we install and load the package if we haven't done so.
-```{r setup, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE}
+```{r setup, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE, eval = FALSE}
 ## First, we save your current workspace
 save.image(file=paste(tempdir(), "currsession.RData", sep = "/"))
 ## make sure you start with a clean session.

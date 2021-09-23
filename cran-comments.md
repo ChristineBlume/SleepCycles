@@ -4,16 +4,17 @@
 * win-builder (devel)
 
 ## R CMD check results
-
 There were no ERRORs or WARNINGs or NOTES.
 
 ## Checks using R-hub
-
 There were no ERRORs or WARNINGs or NOTES.
 
 ## Downstream dependencies
-
 I have also run R CMD check on downstream dependencies.
+
+## Comments resulting from previous submission to CRAN (v 1.1.3)
+
+There was an issue with vignette building, which sometimes resulted in a WARNING.
 
 ## Comments resulting from previous submission to CRAN (v 1.1.2)
 
