@@ -7,8 +7,7 @@ The SleepCycles package
 
 ### SleepCycles 1.1.4 (2021-22-09)
 
-Build Engine for the Vignette changed from knitr to rmarkdown to solve
-an issue with vignette building under
+Solved an issue that could result in problems with vignette building.
 
 ### SleepCycles 1.1.3 (2021-11-08)
 
